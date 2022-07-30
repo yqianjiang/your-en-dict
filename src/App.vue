@@ -7,19 +7,9 @@ import HelloWorld from './components/HelloWorld.vue'
 <template>
   <div>
   </div>
-  <HelloWorld msg="Vite + Vue" />
+  <HelloWorld msg="你的定制英语词典" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+
 </style>
