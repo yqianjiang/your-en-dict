@@ -1,13 +1,17 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+
 </script>
 
 <template>
-  <div>
-  </div>
-  <HelloWorld msg="你的定制英语词典" />
+  <a href="#/reading">Reading</a> |
+  <a href="#/me">Me</a>
+  <router-view v-slot="{ Component, route }">
+    <transition :name="route.meta.transition">
+      <KeepAlive include="Reading">
+        <component :is="Component" />
+      </KeepAlive>
+    </transition>
+  </router-view>
 </template>
 
 <style scoped>
