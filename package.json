@@ -11,9 +11,13 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "js-md5": "^0.7.3",
     "vant": "^3.5.2",
     "vue": "^3.2.37",
-    "vue-router": "4"
+    "vue-router": "4",
+    "wink-eng-lite-web-model": "^1.4.1",
+    "wink-lemmatizer": "^3.0.2",
+    "wink-nlp": "^1.12.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.0",

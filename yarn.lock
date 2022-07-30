@@ -761,6 +761,11 @@ istanbul-reports@^3.1.4:
     html-escaper "^2.0.0"
     istanbul-lib-report "^3.0.0"
 
+js-md5@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/js-md5/-/js-md5-0.7.3.tgz#b4f2fbb0b327455f598d6727e38ec272cd09c3f2"
+  integrity sha512-ZC41vPSTLKGwIRjqDh8DfXoCrdQIyBgspJVPXHBGu4nZlAEvG3nf+jO9avM9RmLiGakg7vz974ms99nEV0tmTQ==
+
 jsdom@^20.0.0:
   version "20.0.0"
   resolved "https://registry.yarnpkg.com/jsdom/-/jsdom-20.0.0.tgz#882825ac9cc5e5bbee704ba16143e1fa78361ebf"
@@ -1238,6 +1243,34 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wink-eng-lite-web-model@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/wink-eng-lite-web-model/-/wink-eng-lite-web-model-1.4.1.tgz#d19ec9bf1edbb1bf4400628330475ad650b89a32"
+  integrity sha512-nfQaRNhqx1b5kPRGM2HY4c5qcbB4ygndDG+YJkeVXqKggsALUtjj2CD+D5lknzKIaBIhhdeDfyFNXUs8Dab1Vg==
+
+wink-lemmatizer@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/wink-lemmatizer/-/wink-lemmatizer-3.0.2.tgz#344f4a2f4966aada1e6670985f1ca2194d8a0ead"
+  integrity sha512-0G572wdcujnRfpjSKs2lDXjA2+8APzkQu+gsREzzOjqg39C1ACE912veMwx2onlbYfUifsZRVaLZUOXjsHFVzA==
+  dependencies:
+    wink-lexicon "^2.1.2"
+    wink-porter2-stemmer "^2.0.0"
+
+wink-lexicon@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/wink-lexicon/-/wink-lexicon-2.1.2.tgz#6cbbb7662259993972e137271fdf477caf3c84e8"
+  integrity sha512-LUIVIKNIURMHN38leZXWP+ZE0b1jWUdGDHfgV6kmPSHy2AqwHS/n8xGADRsfJxJamLb6BwQY713/w2XnWYk/HQ==
+
+wink-nlp@^1.12.0:
+  version "1.12.0"
+  resolved "https://registry.yarnpkg.com/wink-nlp/-/wink-nlp-1.12.0.tgz#71b0c8783e32370f1750e2e5235153acdb1d8a15"
+  integrity sha512-HwP1rVGJ+IfkC7naeKCRnhjXNO9vhHCuIYeunFIO8MutXUD4yLkkjwwGM8J+apfWdUogopbcHyPRIPvUQdRheQ==
+
+wink-porter2-stemmer@^2.0.0:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/wink-porter2-stemmer/-/wink-porter2-stemmer-2.0.1.tgz#f7680e584e2b9b4c44766642325671662e98f44a"
+  integrity sha512-0g+RkkqhRXFmSpJQStVXW5N/WsshWpJXsoDRW7DwVkGI2uDT6IBCoq3xdH5p6IHLaC6ygk7RWUsUx4alKxoagQ==
 
 word-wrap@~1.2.3:
   version "1.2.3"
