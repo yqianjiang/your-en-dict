@@ -6,6 +6,9 @@ import { getTranslation, getTranslationBatch } from "@/services/dict.js";
 import { compare } from "@/utils/articles/counter.js";
 import { useRoute } from "vue-router";
 import { findLemma } from "@/utils/lemmatize.js";
+import Popup from "@/components/popup.vue";
+import WordList from "@/components/wordList.vue";
+import { NTabPane, NTabs } from "naive-ui";
 
 const route = useRoute();
 const article = ref({});
@@ -103,6 +106,7 @@ onBeforeUnmount(() => {
 <template>
   <h2>{{ article.title }}</h2>
   <div class="sticky-top">
+    <div>共{{article.tokens?.length}}词，生词率{{((data.unknownWord.length / data.knownWord.length)*100).toFixed(2)}}%</div>
     <button
       v-if="Object.keys(data.translations).length"
       @click="mode.showTrans = !mode.showTrans"
@@ -114,6 +118,19 @@ onBeforeUnmount(() => {
       {{ mode.markUnknownWord ? "停止标记" : "标记生词" }}
     </button>
     <button @click="onUpdateUserDict">更新词表</button>
+    <Popup btnText="显示词表" title="词表">
+      <n-tabs type="segment">
+        <n-tab-pane name="0" :tab="`生词 (共${data.unknownWord.length}个)`">
+          <WordList :words="data.unknownWord" :wordDict="data.translations" />
+        </n-tab-pane>
+        <n-tab-pane name="1" :tab="`未标记词 (共${data.unseenWord.length}个)`">
+          <WordList :words="data.unseenWord" :wordDict="data.translations" />
+        </n-tab-pane>
+        <n-tab-pane name="2" :tab="`熟词 (共${data.knownWord.length}个)`">
+          <WordList :words="data.knownWord" :wordDict="data.translations" />
+        </n-tab-pane>
+      </n-tabs>
+    </Popup>
   </div>
   <p @click="onClickWord">
     <span
