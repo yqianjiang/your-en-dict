@@ -1,6 +1,6 @@
 import { setLocal, getLocal } from "@/utils/stores";
 
-export class UserDict {
+class UserDict {
   constructor() {
     this._knownWords = {};
     this._unknownWords = {};
@@ -84,3 +84,5 @@ export class UserDict {
     delete this._unknownWords[word];
   }
 }
+
+export const userDict = new UserDict();

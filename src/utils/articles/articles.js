@@ -4,13 +4,33 @@ import as from "wink-nlp/src/as.js";
 import its from "wink-nlp/src/its.js";
 import md5 from "js-md5";
 import { compare } from "./counter";
-import {setLocal, getLocal} from '@/utils/stores'
+import { setLocal, getLocal } from "@/utils/stores";
 
-export class Articles {
+const nlp = winkNLP(model);
+
+function tokenize(plainText, title) {
+  const doc = nlp.readDoc(plainText);
+  const tokens = doc.tokens().filter((t) => t.out(its.type) === "word");
+  const wordsFreq = tokens.out(its.lemma, as.freqTable);
+  const wordsUnique = wordsFreq.map((arr) => arr[0]);
+  const sentences = doc.sentences().out();
+  title = title || sentences.splice(0, 1)[0];
+  return {
+    title,
+    plainText,
+    totalWords: tokens.out().length,
+    wordsUnique,
+    wordsFreq,
+    tokens: doc.tokens().out(),
+    sentences,
+    // sentencesTrans: [],
+  };
+}
+
+class Articles {
   constructor() {
     this.articles = [];
     this.loadedArticles = [];
-    this._nlp = winkNLP(model);
     this.load();
   }
 
@@ -22,29 +42,30 @@ export class Articles {
     setLocal("articles", this.articles);
   }
 
-  addArticle(article) {
-    const uuid = md5(article);
+  updateArticle(uuid, plainText, title) {
+    const article = this.articles.find((article) => article.uuid === uuid);
+    if (md5(plainText) === uuid && title) {
+      // 内容不变，有新标题，只需要更新标题
+      article.title = title;
+    } else {
+      const newArticle = tokenize(plainText, title);
+      Object.assign(article, newArticle);
+    }
+    this.save();
+  }
 
-    // 文章已存在，跳过
-    if (this.articles.find((article) => article.uuid === uuid)) return;
+  addArticle(plainText, title) {
+    const uuid = md5(plainText);
 
-    const doc = this._nlp.readDoc(article);
-    const tokens = doc.tokens().filter((t) => t.out(its.type) === "word");
-    const wordsFreq = tokens.out(its.lemma, as.freqTable);
-    const wordsUnique = wordsFreq.map((arr) => arr[0]);
-    const sentences = doc.sentences().out();
+    // 文章已存在，更新？
+    if (this.articles.find((article) => article.uuid === uuid)) {
+      this.updateArticle(uuid, plainText, title);
+      return;
+    }
 
-    this.articles.push({
-      uuid,
-      title: sentences[0],
-      totalWords: tokens.out().length,
-      wordsUnique,
-      wordsFreq,
-      tokens: doc.tokens().out(),
-      sentences,
-      // sentencesTrans: [],
-    });
+    const article = tokenize(plainText, title);
 
+    this.articles.push({ uuid, ...article });
     this.save();
   }
 
@@ -56,7 +77,7 @@ export class Articles {
   getArticleBatch(userDict, batchSize = 10) {
     // 所有文章都已经加载了
     const nLoadedArticles = this.loadedArticles.length;
-    if (this.articles.length <= nLoadedArticles) return {};
+    if (this.articles.length <= nLoadedArticles) return;
 
     const batch = this.articles.slice(
       nLoadedArticles,
@@ -80,7 +101,7 @@ export class Articles {
       };
     });
 
-    this.loadedArticles = [...this.loadedArticles, articles];
+    this.loadedArticles = [...this.loadedArticles, ...articles];
 
     return articles;
   }
@@ -93,3 +114,5 @@ export class Articles {
     return { ...article, ...article2 };
   }
 }
+
+export const articlesHelper = new Articles();

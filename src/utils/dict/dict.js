@@ -1,7 +1,7 @@
 import { ecdict } from "./ecdict2w.js";
 import { findLemma } from "@/utils/lemmatize";
 
-export class Dict {
+class Dict {
   constructor() {
     this.dict = {};
     this.loadDict();
@@ -16,3 +16,5 @@ export class Dict {
     return this.dict[word];
   }
 }
+
+export const dict = new Dict();

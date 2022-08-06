@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-const msg = ref('404 Not Found')
+const title = ref('404 Not Found')
 </script>
 
 <template>
-  <div>{{ msg }}</div>
+  <h1>{{ title }}</h1>
 </template>
 
 <style scoped>

@@ -5,18 +5,17 @@ const routes = [
     path: "/reading",
     name: "Reading",
     component: () =>
-      import(/* webpackChunkName: "reading" */ "@/views/reading/index.vue"),
+      import(/* @vite-ignore */ "../views/reading/index.vue"),
     meta: {
       order: 1,
       transition: "fade",
-      // keepAlive: true
     },
   },
   {
     path: "/reading/:id",
     name: "Article",
     component: () =>
-      import(/* webpackChunkName: "reading" */ "@/views/reading/article.vue"),
+      import(/* @vite-ignore */ "../views/reading/article.vue"),
     meta: {
       order: 11,
       transition: "slide-left",
@@ -26,7 +25,7 @@ const routes = [
     path: "/me",
     name: "Me",
     component: () =>
-      import(/* webpackChunkName: "main" */ "@/views/me/index.vue"),
+      import(/* @vite-ignore */ "../views/me/index.vue"),
     meta: {
       order: 2,
       transition: "fade",
@@ -35,8 +34,16 @@ const routes = [
   {
     path: "/me/word-list",
     name: "WordList",
-    component: () =>
-      import(/* webpackChunkName: "main" */ "@/views/me/wordList.vue"),
+    component: () => import(/* @vite-ignore */ "../views/me/wordList.vue"),
+    meta: {
+      order: 1,
+      transition: "slide-left",
+    },
+  },
+  {
+    path: "/me/:id",
+    name: "Word",
+    component: () => import(/* @vite-ignore */ "../views/me/word.vue"),
     meta: {
       order: 1,
       transition: "slide-left",
@@ -46,7 +53,7 @@ const routes = [
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () =>
-      import(/* webpackChunkName: "main" */ "@/views/notFound.vue"),
+      import(/* @vite-ignore */ "../views/notFound.vue"),
     meta: {
       order: 111,
       transition: "fade",

@@ -41,6 +41,7 @@ button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
+  margin: 0.25em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
@@ -67,6 +68,19 @@ button:focus-visible {
   text-align: center;
 }
 
+hr {
+  border-color: gray;
+  border-width: 0.5px;
+}
+
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background-color: #242424;
+  width: 100%;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -77,5 +91,8 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+  .sticky-top {
+    background-color: #ffffff;
   }
 }
