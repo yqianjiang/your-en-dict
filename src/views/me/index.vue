@@ -1,14 +1,20 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { userDict } from "@/utils/dict/userDict.js";
-import { compare } from "@/utils/articles/counter";
+import { compare } from "@/utils/articles/counter.js";
+import { getCurrentUser } from "@/services/user.js";
+import { syncUserDict } from "@/services/userDict.js";
+import { NButton } from "naive-ui";
 import Uploader from "@/components/uploader.vue";
+import NaiveTheme from "@/components/NaiveTheme.vue";
+import LoginForm from "@/components/LoginForm.vue";
 import Popup from "@/components/popup.vue";
 import WordList from "@/components/wordList.vue";
 
 const msg = ref("Me");
 const showUploader = ref(false);
 const showUploader2 = ref(false);
+const loadingRef = ref(false);
 const targetWords = reactive({
   known: [],
   unknown: [],
@@ -19,6 +25,11 @@ const dictsLen = reactive({
   unknown: 0,
   target: 0,
 });
+
+const isLoggedIn = ref(false);
+if (getCurrentUser()) {
+  isLoggedIn.value = true;
+}
 
 function updateRatios() {
   const { known, unknown, unseen } = compare(
@@ -52,13 +63,14 @@ const downloadLink =
 
 function addWordsFromJson(jsonData) {
   const data = JSON.parse(decodeURIComponent(jsonData));
-  if (data.known && data.unknown);
-  userDict.addKnownWords(data.known);
-  userDict.addUnknownWords(data.unknown);
-  userDict.save();
-  console.log("导入成功！");
+  if (data.known && data.unknown) {
+    userDict.addKnownWords(data.known);
+    userDict.addUnknownWords(data.unknown);
+    userDict.save();
+    console.log("导入成功！");
+    updateDictsLen();
+  }
   showUploader.value = false;
-  updateDictsLen();
 }
 function addTargetWords(jsonData) {
   userDict.targetWords = JSON.parse(jsonData);
@@ -66,10 +78,31 @@ function addTargetWords(jsonData) {
   showUploader2.value = false;
   updateDictsLen();
 }
+async function syncDict() {
+  loadingRef.value = true;
+  const data = await syncUserDict({
+    known: userDict.knownWords,
+    unknown: userDict.unknownWords,
+  });
+  if (data) {
+    userDict.addKnownWords(data.known);
+    userDict.addUnknownWords(data.unknown);
+    userDict.save();
+    console.log("同步成功！");
+    updateDictsLen();
+  }
+  loadingRef.value = false;
+}
 </script>
 
 <template>
   <h1>{{ msg }}</h1>
+  <NaiveTheme>
+    <span v-if="isLoggedIn">
+      <n-button :loading="loadingRef" @click="syncDict">云端同步</n-button>
+    </span>
+    <LoginForm @login="isLoggedIn = true" @logout="isLoggedIn = false" />
+  </NaiveTheme>
   <div>
     <button v-if="!showUploader" @click="showUploader = true">导入词表</button>
     <Uploader

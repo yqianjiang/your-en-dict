@@ -1,4 +1,4 @@
-import * as LC from "leancloud-storage";
+import LC from "leancloud-storage";
 
 LC.init({
   appId: "hamqF0Uqhpgj4Dzf0dsUMLUb-gzGzoHsz",
