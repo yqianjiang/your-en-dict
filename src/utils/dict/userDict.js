@@ -5,6 +5,7 @@ class UserDict {
     this._knownWords = {};
     this._unknownWords = {};
     this._seenWords = {}; // 见过的词都会保存，与生词熟词独立
+    this.targetWords = [];
     this.load();
   }
 
@@ -24,12 +25,14 @@ class UserDict {
     this._knownWords = getLocal("knownWords") || {};
     this._unknownWords = getLocal("unknownWords") || {};
     this._seenWords = getLocal("seenWords") || {};
+    this.targetWords = getLocal("targetWords") || {};
   }
 
   save() {
     setLocal("knownWords", this._knownWords);
     setLocal("unknownWords", this._unknownWords);
     setLocal("seenWords", this._seenWords);
+    setLocal("targetWords", this.targetWords);
   }
 
   _genWordMeta(word) {
