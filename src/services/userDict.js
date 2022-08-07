@@ -48,12 +48,16 @@ async function updateUserDict(words, uuid) {
   const userDict = LC.Object.createWithoutData("UserDict", uuid);
 
   // 如果数组中不包含指定对象，则将该对象加入数组。对象的插入位置是随机的
-  userDict.addUnique("unknown", words.unknown);
   userDict.addUnique("known", words.known);
+  userDict.addUnique("unknown", words.unknown);
+
+  console.log("userDict", userDict);
+  console.log("uploading known words", words.known);
+  console.log("uploading unknown words", words.unknown);
 
   try {
     await userDict.save();
-    console.log("更新成功！");
+    console.log("已更新至云端！");
   } catch (error) {
     console.log(error);
   }
@@ -95,10 +99,12 @@ export async function syncUserDict(words) {
   const known = getDiff(res[0].known, words.known);
   const unknown = getDiff(res[0].unknown, words.unknown);
 
-  await updateUserDict(
-    { known: known.toCloud, unknown: unknown.toCloud },
-    res[0].objectId
-  );
+  if (known.toCloud.length || unknown.toCloud.length) {
+    await updateUserDict(
+      { known: known.toCloud, unknown: unknown.toCloud },
+      res[0].objectId
+    );
+  }
 
   return {
     known: known.toLocal,

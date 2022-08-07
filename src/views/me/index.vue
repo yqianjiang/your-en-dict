@@ -85,6 +85,7 @@ async function syncDict() {
     unknown: userDict.unknownWords,
   });
   if (data) {
+    console.log('从云端下载：', data);
     userDict.addKnownWords(data.known);
     userDict.addUnknownWords(data.unknown);
     userDict.save();
@@ -147,6 +148,16 @@ async function syncDict() {
         </n-tab-pane>
       </n-tabs>
     </Popup>
+    <div>(共{{ dictsLen.target }}个)</div>
+    <div>
+      (未标记词{{ targetWords.unseen.length }}个，已标注词掌握{{
+        (
+          (targetWords.known.length /
+            (targetWords.known.length + targetWords.unknown.length)) *
+          100
+        ).toFixed(2)
+      }}%)
+    </div>
   </div>
 </template>
 

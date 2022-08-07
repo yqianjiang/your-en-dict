@@ -28,9 +28,9 @@ const mode = reactive({
 const computeTranslation = (token) => {
   token = findLemma(token);
   const trans = data.translations[token]?.translation
-    .split(".")[1]
-    .split(",")[0]
-    .split("\\")[0];
+    ?.split(".")[1]
+    ?.split(",")[0]
+    ?.split("\\")[0];
   return mode.showTrans && trans ? `${trans.trim()}` : "";
 };
 
@@ -98,7 +98,7 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(() => {
-  userDict.addSeenWords(article.value.wordsFreq);
+  // userDict.addSeenWords(article.value.wordsFreq);
   userDict.save();
 });
 </script>
@@ -106,7 +106,17 @@ onBeforeUnmount(() => {
 <template>
   <h2>{{ article.title }}</h2>
   <div class="sticky-top">
-    <div>共{{article.tokens?.length}}词，生词率{{((data.unknownWord.length / data.knownWord.length)*100).toFixed(2)}}%</div>
+    <div>
+      共{{ article.totalWords }}词，生词率{{
+        (
+          ((data.unknownWord.length + data.unseenWord.length) /
+            (data.knownWord.length +
+              data.unknownWord.length +
+              data.unseenWord.length)) *
+          100
+        ).toFixed(2)
+      }}%
+    </div>
     <button
       v-if="Object.keys(data.translations).length"
       @click="mode.showTrans = !mode.showTrans"
@@ -132,7 +142,7 @@ onBeforeUnmount(() => {
       </n-tabs>
     </Popup>
   </div>
-  <p @click="onClickWord">
+  <p class="article" @click="onClickWord">
     <span
       v-for="token in article.tokens"
       :class="{
@@ -159,6 +169,11 @@ onBeforeUnmount(() => {
 ruby {
   font-size: 16px;
   line-height: 180%;
+}
+.article {
+  white-space: pre-wrap;
+  font-size: 18px;
+  line-height: 200%;
 }
 @media (prefers-color-scheme: light) {
   .token--unknown {
