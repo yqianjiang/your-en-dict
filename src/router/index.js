@@ -12,6 +12,16 @@ const routes = [
     },
   },
   {
+    path: "/my-reading",
+    name: "MyReading",
+    component: () =>
+      import(/* @vite-ignore */ "../views/reading/myReading.vue"),
+    meta: {
+      order: 1,
+      transition: "fade",
+    },
+  },
+  {
     path: "/reading/:id",
     name: "Article",
     component: () =>

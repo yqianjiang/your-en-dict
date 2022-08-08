@@ -30,22 +30,33 @@ const nlp = winkNLP(model);
 // }
 
 function splitCNSentence(text) {
-  return text.split("。");
+  if (text) {
+    return text.split("。");
+  } else {
+    return [];
+  }
 }
 
 class Articles {
   constructor() {
     this.articles = [];
-    this.loadedArticles = [];
+    this.openedArticles = {};
+    this.markedArticles = {};
+    // this.loadedArticles = [];
     this.load();
   }
 
   load() {
     this.articles = getLocal("articles") || [];
+    this.openedArticles = getLocal("openedArticles") || {};
+    this.markedArticles = getLocal("markedArticles") || {};
   }
 
   save() {
     setLocal("articles", this.articles);
+    setLocal("openedArticles", this.openedArticles);
+    setLocal("markedArticles", this.markedArticles);
+    console.log("saved", JSON.stringify(this.openedArticles));
   }
 
   // updateArticle(uuid, plainText, title) {
@@ -76,21 +87,40 @@ class Articles {
   //   this.save();
   // }
 
-  /**
-   * 用户一次获取一批（默认10篇）文章，并对照这10篇文章中的生词
-   * @param {UserDict} userDict
-   * @param {string} tag
-   * @param {number} startIdx
-   * @param {number} batchSize
-   * @returns
-   */
-  async getArticleBatch(userDict, tag, startIdx = 0, batchSize = 10) {
-    const batch = await fetchArticleBatch({
-      tag,
-      batchSize,
-      startIdx,
-    });
+  async getArticle(uuid) {
+    // 从本地缓存中读取
+    const article =
+      this.openedArticles[uuid] ||
+      this.markedArticles[uuid] ||
+      (await fetchArticle(uuid));
+    if (article.tokens) return article;
 
+    const paragraphs = article.plainText.split("\n\n");
+    const doc = nlp.readDoc(article.plainText);
+    const sentenceTrans = Array.isArray(article.translation)
+      ? article.translation
+      : splitCNSentence(article.translation);
+    const sentence = doc
+      .sentences()
+      .out(its.span)
+      .map((x, idx) => {
+        return {
+          span: x,
+          translation: sentenceTrans[idx],
+        };
+      });
+
+    return {
+      objectId: uuid,
+      wordsUnique: article.wordsUnique,
+      title: article.title,
+      totalWords: article.totalWords,
+      tokens: doc.tokens().out(),
+      sentence,
+    };
+  }
+
+  _formatArticles(batch, userDict) {
     const articles = batch.map((article) => {
       const { ratio, unknown, unseen } = compare(
         article.wordsUnique,
@@ -111,30 +141,50 @@ class Articles {
     return articles;
   }
 
-  async getArticle(uuid) {
-    const article = await fetchArticle(uuid);
-    const paragraphs = article.plainText.split("\n\n");
-    const doc = nlp.readDoc(article.plainText);
-    const sentenceTrans = Array.isArray(article.translation)
-      ? article.translation
-      : splitCNSentence(article.translation);
-    const sentence = doc
-      .sentences()
-      .out(its.span)
-      .map((x, idx) => {
-        return {
-          span: x,
-          translation: sentenceTrans[idx],
-        };
-      });
+  /**
+   * 用户一次获取一批（默认10篇）文章，并对照这10篇文章中的生词
+   * @param {UserDict} userDict
+   * @param {string} tag
+   * @param {number} startIdx
+   * @param {number} batchSize
+   * @returns
+   */
+  async getArticleBatch(userDict, tag, startIdx = 0, batchSize = 10) {
+    const batch = await fetchArticleBatch({
+      tag,
+      batchSize,
+      startIdx,
+    });
 
-    return {
-      wordsUnique: article.wordsUnique,
-      title: article.title,
-      totalWords: article.totalWords,
-      tokens: doc.tokens().out(),
-      sentence,
-    };
+    return this._formatArticles(batch, userDict);
+  }
+
+  getOpenedArticles(userDict) {
+    const batch = Object.values(this.openedArticles);
+    if (batch.length) {
+      return this._formatArticles(batch, userDict);
+    }
+    return batch;
+  }
+
+  getMarkedArticles(userDict) {
+    const batch = Object.values(this.markedArticles);
+    if (batch.length) {
+      return this._formatArticles(batch, userDict);
+    }
+    return batch;
+  }
+
+  markArticle(state, article) {
+    const uuid = article.objectId;
+    if (state === "hasOpened") {
+      this.openedArticles[uuid] = article;
+    } else if (state === "hasMarked") {
+      delete this.openedArticles[uuid];
+      this.markedArticles[uuid] = article;
+      console.log("marked", this.markedArticles);
+    }
+    this.save();
   }
 }
 

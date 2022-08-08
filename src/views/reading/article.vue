@@ -75,6 +75,7 @@ const onUpdateUserDict = () => {
   userDict.addKnownWords([...data.knownWord, ...data.unseenWord]);
   userDict.addUnknownWords(data.unknownWord);
   userDict.save();
+  articlesHelper.markArticle("hasMarked", article.value);
   mode.markUnknownWord = false;
   data.unseenWord = [];
   console.log(data);
@@ -84,7 +85,8 @@ const onUpdateUserDict = () => {
 
 onMounted(async () => {
   const uuid = route.params.id;
-  article.value = await articlesHelper.getArticle(uuid);
+  const result = await articlesHelper.getArticle(uuid);
+  article.value = result;
   const { known, unknown, unseen } = compare(
     article.value.wordsUnique,
     userDict.knownWords,
@@ -94,7 +96,7 @@ onMounted(async () => {
   data.unseenWord = unseen;
   data.knownWord = known;
 
-  console.log(article.value);
+  articlesHelper.markArticle("hasOpened", article.value);
 
   _findWordTrans([...data.unknownWord, ...data.unseenWord]);
 });
