@@ -4,7 +4,7 @@
 set -e
 
 # 构建
-# yarn build
+yarn build
 
 # 进入构建文件夹
 cd dist

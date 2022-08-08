@@ -29,6 +29,10 @@ const nlp = winkNLP(model);
 //   };
 // }
 
+function splitCNSentence(text) {
+  return text.split("。");
+}
+
 class Articles {
   constructor() {
     this.articles = [];
@@ -57,7 +61,7 @@ class Articles {
   // }
 
   // async addArticle(plainText, title) {
-    
+
   //   const uuid = md5(plainText);
 
   //   // 文章已存在，更新？
@@ -109,14 +113,27 @@ class Articles {
 
   async getArticle(uuid) {
     const article = await fetchArticle(uuid);
-    const paragraphs = article.plainText.split('\n\n');
+    const paragraphs = article.plainText.split("\n\n");
     const doc = nlp.readDoc(article.plainText);
+    const sentenceTrans = Array.isArray(article.translation)
+      ? article.translation
+      : splitCNSentence(article.translation);
+    const sentence = doc
+      .sentences()
+      .out(its.span)
+      .map((x, idx) => {
+        return {
+          span: x,
+          translation: sentenceTrans[idx],
+        };
+      });
 
     return {
       wordsUnique: article.wordsUnique,
       title: article.title,
       totalWords: article.totalWords,
       tokens: doc.tokens().out(),
+      sentence,
     };
   }
 }

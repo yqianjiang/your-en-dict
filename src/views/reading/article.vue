@@ -21,8 +21,8 @@ const data = reactive({
 const mode = reactive({
   markUnknownWord: false,
   highlight: true,
-  showTrans: true,
-  translated: false,
+  showTrans: false,
+  showByTokens: true,
 });
 
 const computeTranslation = (token) => {
@@ -94,6 +94,8 @@ onMounted(async () => {
   data.unseenWord = unseen;
   data.knownWord = known;
 
+  console.log(article.value);
+
   _findWordTrans([...data.unknownWord, ...data.unseenWord]);
 });
 
@@ -121,8 +123,9 @@ onBeforeUnmount(() => {
       v-if="Object.keys(data.translations).length"
       @click="mode.showTrans = !mode.showTrans"
     >
-      {{ mode.showTrans ? "隐藏" : "显示" }}翻译
+      {{ mode.showTrans ? "隐藏" : "显示" }}词译
     </button>
+    <button @click="mode.showByTokens = !mode.showByTokens">模式切换</button>
     <button @click="mode.highlight = !mode.highlight">高亮开关</button>
     <button @click="mode.markUnknownWord = !mode.markUnknownWord">
       {{ mode.markUnknownWord ? "停止标记" : "标记生词" }}
@@ -142,19 +145,26 @@ onBeforeUnmount(() => {
       </n-tabs>
     </Popup>
   </div>
-  <p class="article" @click="onClickWord">
-    <span
-      v-for="token in article.tokens"
-      :class="{
-        'token--unseen':
-          mode.highlight && data.unseenWord.includes(findLemma(token)),
-        'token--unknown':
-          mode.highlight && data.unknownWord.includes(findLemma(token)),
-      }"
-      ><ruby :data-token="token">
-        {{ token }}<rt>{{ computeTranslation(token) }}</rt>
-      </ruby>
-      {{ " " }}
+  <p class="article">
+    <span v-for="item in article.sentence">
+      <span class="origin-sentence" @click="onClickWord">
+        <span
+          v-for="token in article.tokens.slice(item.span[0], item.span[1] + 1)"
+          :class="{
+            'token--unseen':
+              mode.highlight && data.unseenWord.includes(findLemma(token)),
+            'token--unknown':
+              mode.highlight && data.unknownWord.includes(findLemma(token)),
+          }"
+          ><ruby :data-token="token">
+            {{ token }}<rt>{{ computeTranslation(token) }}</rt>
+          </ruby>
+          {{ " " }}
+        </span>
+      </span>
+      <div class="translate-sentence" v-show="!mode.showByTokens">
+        {{ item.translation }}
+      </div>
     </span>
   </p>
 </template>
@@ -166,14 +176,14 @@ onBeforeUnmount(() => {
 .token--unknown {
   color: yellow;
 }
-ruby {
-  font-size: 16px;
-  line-height: 180%;
-}
 .article {
   white-space: pre-wrap;
-  font-size: 18px;
+  font-size: 1.5em;
   line-height: 200%;
+}
+.translate-sentence {
+  font-size: 0.75em;
+  margin-bottom: 30px;
 }
 @media (prefers-color-scheme: light) {
   .token--unknown {
