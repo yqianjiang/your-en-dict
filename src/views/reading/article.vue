@@ -148,26 +148,28 @@ onBeforeUnmount(() => {
     </Popup>
   </div>
   <p class="article">
-    <span v-for="item in article.sentence">
-      <span class="origin-sentence" @click="onClickWord">
-        <span
-          v-for="token in article.tokens.slice(item.span[0], item.span[1] + 1)"
-          :class="{
-            'token--unseen':
-              mode.highlight && data.unseenWord.includes(findLemma(token)),
-            'token--unknown':
-              mode.highlight && data.unknownWord.includes(findLemma(token)),
-          }"
-          ><ruby :data-token="token">
-            {{ token }}<rt>{{ computeTranslation(token) }}</rt>
-          </ruby>
-          {{ " " }}
+    <p v-for="(paragraph, idx) in article.sentences" :key="'paragraph'+idx">
+      <span v-for="(sentence, idx) in paragraph" :key="sentence.sentence.slice(0, 5)+idx">
+        <span class="origin-sentence" @click="onClickWord">
+          <span
+            v-for="token in sentence.tokens"
+            :class="{
+              'token--unseen':
+                mode.highlight && data.unseenWord.includes(findLemma(token)),
+              'token--unknown':
+                mode.highlight && data.unknownWord.includes(findLemma(token)),
+            }"
+            ><ruby :data-token="token">
+              {{ token }}<rt>{{ computeTranslation(token) }}</rt>
+            </ruby>
+            {{ " " }}
+          </span>
         </span>
+        <div class="translate-sentence" v-show="!mode.showByTokens">
+          {{ sentence.translation }}
+        </div>
       </span>
-      <div class="translate-sentence" v-show="!mode.showByTokens">
-        {{ item.translation }}
-      </div>
-    </span>
+    </p>
   </p>
 </template>
 

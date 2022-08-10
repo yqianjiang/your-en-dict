@@ -6,7 +6,6 @@ import { getCurrentUser } from "@/services/user.js";
 import { syncUserDict } from "@/services/userDict.js";
 import { NButton } from "naive-ui";
 import Uploader from "@/components/uploader.vue";
-import NaiveTheme from "@/components/NaiveTheme.vue";
 import LoginForm from "@/components/LoginForm.vue";
 import Popup from "@/components/popup.vue";
 import WordList from "@/components/wordList.vue";
@@ -85,7 +84,7 @@ async function syncDict() {
     unknown: userDict.unknownWords,
   });
   if (data) {
-    console.log('从云端下载：', data);
+    console.log("从云端下载：", data);
     userDict.addKnownWords(data.known);
     userDict.addUnknownWords(data.unknown);
     userDict.save();
@@ -98,12 +97,10 @@ async function syncDict() {
 
 <template>
   <h1>{{ msg }}</h1>
-  <NaiveTheme>
-    <span v-if="isLoggedIn">
-      <n-button :loading="loadingRef" @click="syncDict">云端同步</n-button>
-    </span>
-    <LoginForm @login="isLoggedIn = true" @logout="isLoggedIn = false" />
-  </NaiveTheme>
+  <span v-if="isLoggedIn">
+    <n-button :loading="loadingRef" @click="syncDict">云端同步</n-button>
+  </span>
+  <LoginForm @login="isLoggedIn = true" @logout="isLoggedIn = false" />
   <div>
     <button v-if="!showUploader" @click="showUploader = true">导入词表</button>
     <Uploader

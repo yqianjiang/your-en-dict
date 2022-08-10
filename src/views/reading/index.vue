@@ -1,11 +1,13 @@
 <script setup>
 import { watch, computed, ref } from "vue";
 import { useRoute } from "vue-router";
+import { useOrderSelector } from "./hooks/useOrderSelector.js";
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
 // import Uploader from "../../components/uploader.vue";
 
 const route = useRoute();
+const { selectedOrder, orderOptions } = useOrderSelector();
 
 const BATCH_SIZE = 10;
 let pageIdx = 0;
@@ -32,7 +34,8 @@ const getArticles = async () => {
     userDict,
     tag.value,
     pageIdx,
-    BATCH_SIZE
+    BATCH_SIZE,
+    selectedOrder.value
   );
   if (result) {
     articles.value = [...articles.value, ...result];
@@ -47,11 +50,14 @@ const getArticles = async () => {
 };
 getArticles();
 
-watch(tag, () => {
+function reGetArticles() {
   articles.value = [];
   pageIdx = 0;
   getArticles();
-});
+}
+
+watch(tag, reGetArticles);
+watch(selectedOrder, reGetArticles);
 
 // const showArticleUploader = ref(false);
 
@@ -77,6 +83,11 @@ watch(tag, () => {
       <a v-else :href="'#/reading?tag=' + item.tag">{{ item.label }}</a>
     </span>
   </div>
+  <n-select
+    v-model:value="selectedOrder"
+    :options="orderOptions"
+    placeholder="请选择文章排序"
+  />
   <!-- <button @click="onShowUploader">新增文章</button> -->
   <!-- <Uploader
     v-show="showArticleUploader"
@@ -84,11 +95,14 @@ watch(tag, () => {
     @cancel="showArticleUploader = false"
   /> -->
   <div v-for="article in articles" :key="article.uuid">
-    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a>
+    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a><n-tag type="info">
+      {{article.tag}}
+    </n-tag>
     <div>
-      共{{ article.totalWords }}词，生词率：{{
-        (article.ratio * 100).toFixed(2)
-      }}% <small>({{ article.unseen.length }}词未标注)</small>
+      {{ article.totalWords }}词 <span :style="article.unseen.length? 'color: gray;': ''">
+        - {{ (article.ratio * 100).toFixed(2) }}% 生词
+        <small v-if="article.unseen.length">({{ article.unseen.length }}未标注)</small>
+      </span>
     </div>
     <hr />
   </div>
@@ -99,4 +113,8 @@ watch(tag, () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.n-tag {
+  margin-left: 8px;
+}
+</style>

@@ -16,6 +16,18 @@ export async function fetchArticleBatch(params) {
   // 获取一页数据
   query.limit(params.batchSize || 10);
   query.skip(params.startIdx || 0); // 会消耗查询时间
+  if (params.orderBy === "createdAtDescending") {
+    query.addDescending("createdAt");
+  }
+  if (params.orderBy === "freqScoreDescending") {
+    query.addDescending("freqScore");
+  }
+  if (params.orderBy === "totalWordsDescending") {
+    query.addDescending("totalWords");
+  }
+  if (params.orderBy === "totalWordsAscending") {
+    query.addAscending("totalWords");
+  }
 
   try {
     const res = await query.find();

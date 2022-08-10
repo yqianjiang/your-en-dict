@@ -48,15 +48,14 @@ class Articles {
 
   load() {
     this.articles = getLocal("articles") || [];
-    this.openedArticles = getLocal("openedArticles") || {};
-    this.markedArticles = getLocal("markedArticles") || {};
+    this.openedArticles = getLocal("openedArticles2") || {};
+    this.markedArticles = getLocal("markedArticles2") || {};
   }
 
   save() {
     setLocal("articles", this.articles);
-    setLocal("openedArticles", this.openedArticles);
-    setLocal("markedArticles", this.markedArticles);
-    console.log("saved", JSON.stringify(this.openedArticles));
+    setLocal("openedArticles2", this.openedArticles);
+    setLocal("markedArticles2", this.markedArticles);
   }
 
   // updateArticle(uuid, plainText, title) {
@@ -95,29 +94,14 @@ class Articles {
       (await fetchArticle(uuid));
     if (article.tokens) return article;
 
-    const paragraphs = article.plainText.split("\n\n");
-    const doc = nlp.readDoc(article.plainText);
-    const sentenceTrans = Array.isArray(article.translation)
-      ? article.translation
-      : splitCNSentence(article.translation);
-    const sentence = doc
-      .sentences()
-      .out(its.span)
-      .map((x, idx) => {
-        return {
-          span: x,
-          translation: sentenceTrans[idx],
-        };
+    article.sentences.forEach((x) => {
+      x.forEach((y) => {
+        const doc = nlp.readDoc(y.sentence);
+        y.tokens = doc.tokens().out();
       });
+    });
 
-    return {
-      objectId: uuid,
-      wordsUnique: article.wordsUnique,
-      title: article.title,
-      totalWords: article.totalWords,
-      tokens: doc.tokens().out(),
-      sentence,
-    };
+    return article;
   }
 
   _formatArticles(batch, userDict) {
@@ -128,10 +112,16 @@ class Articles {
         userDict.unknownWords
       );
 
+      const tags = {
+        'ielts-reading': '阅读',
+        'ielts-listening': '听力',
+      }
+
       return {
         uuid: article.objectId,
         title: article.title,
         totalWords: article.totalWords,
+        tag: tags[article.tag],
         ratio,
         unknown,
         unseen,
@@ -149,11 +139,12 @@ class Articles {
    * @param {number} batchSize
    * @returns
    */
-  async getArticleBatch(userDict, tag, startIdx = 0, batchSize = 10) {
+  async getArticleBatch(userDict, tag, startIdx = 0, batchSize = 10, orderBy) {
     const batch = await fetchArticleBatch({
       tag,
       batchSize,
       startIdx,
+      orderBy,
     });
 
     return this._formatArticles(batch, userDict);
@@ -178,11 +169,12 @@ class Articles {
   markArticle(state, article) {
     const uuid = article.objectId;
     if (state === "hasOpened") {
-      this.openedArticles[uuid] = article;
+      if (!this.markedArticles[uuid]) {
+        this.openedArticles[uuid] = article;
+      }
     } else if (state === "hasMarked") {
       delete this.openedArticles[uuid];
       this.markedArticles[uuid] = article;
-      console.log("marked", this.markedArticles);
     }
     this.save();
   }
