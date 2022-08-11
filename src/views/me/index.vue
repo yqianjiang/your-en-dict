@@ -4,7 +4,7 @@ import { userDict } from "@/utils/dict/userDict.js";
 import { compare } from "@/utils/articles/counter.js";
 import { getCurrentUser } from "@/services/user.js";
 import { syncUserDict } from "@/services/userDict.js";
-import { NButton } from "naive-ui";
+import { NButton, NTabs, NTabPane } from "naive-ui";
 import Uploader from "@/components/uploader.vue";
 import LoginForm from "@/components/LoginForm.vue";
 import Popup from "@/components/popup.vue";

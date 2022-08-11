@@ -1,4 +1,5 @@
 <script setup>
+import { NSpace, NTag, NButton } from 'naive-ui';
 const props = defineProps({
   words: {
     type: Array,

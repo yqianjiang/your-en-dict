@@ -15,19 +15,19 @@ const show = ref(false);
 
 <template>
   <button @click="show = true">{{ props.btnText }}</button>
-  <n-drawer
+  <NDrawer
     v-model:show="show"
     placement="bottom"
     default-height="400"
     resizable
   >
-    <n-drawer-content :title="props.title" closable>
+    <NDrawerContent :title="props.title" closable>
       <template #header v-if="!props.title">
         <slot name="header"></slot>
       </template>
       <slot></slot>
-    </n-drawer-content>
-  </n-drawer>
+    </NDrawerContent>
+  </NDrawer>
 </template>
 
 <style scoped></style>

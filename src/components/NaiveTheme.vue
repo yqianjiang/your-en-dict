@@ -7,7 +7,7 @@ const theme = computed(() => (osThemeRef.value === "dark" ? darkTheme : null));
 </script>
 
 <template>
-  <n-config-provider :theme="theme">
+  <NConfigProvider :theme="theme">
     <slot></slot>
-  </n-config-provider>
+  </NConfigProvider>
 </template>

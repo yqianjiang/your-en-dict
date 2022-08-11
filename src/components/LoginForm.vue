@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref } from "vue";
-import { NForm, NFormItem, NModal, NCard, NButton, NSpace } from "naive-ui";
+import { NForm, NFormItem, NModal, NCard, NButton, NSpace, NInput } from "naive-ui";
 import { login, logout, getCurrentUser } from "@/services/user.js";
 
 const emit = defineEmits(["login", "logout"]);
@@ -60,35 +60,35 @@ function onLogout() {
   <button v-else @click="showLoginModal = true">登录</button>
   <NModal v-model:show="showLoginModal">
     <NCard role="dialog" style="max-width: 400px; margin: auto">
-      <n-form
+      <NForm
         ref="formRef"
         :label-width="80"
         :model="formValue"
         :rules="rules"
         size="medium"
       >
-        <n-form-item label="用户名" path="username">
-          <n-input
+        <NFormItem label="用户名" path="username">
+          <NInput
             v-model:value="formValue.username"
             placeholder="输入用户名"
           />
-        </n-form-item>
-        <n-form-item label="密码" path="password">
-          <n-input
+        </NFormItem>
+        <NFormItem label="密码" path="password">
+          <NInput
             v-model:value="formValue.password"
             type="password"
             placeholder="输入密码"
           />
-        </n-form-item>
-        <n-form-item>
-          <n-space>
-            <n-button :loading="loadingRef" @click="onClickLogin"
-              >登录</n-button
+        </NFormItem>
+        <NFormItem>
+          <NSpace>
+            <NButton :loading="loadingRef" @click="onClickLogin"
+              >登录</NButton
             >
-            <n-button @click="showLoginModal = false">取消</n-button>
-          </n-space>
-        </n-form-item>
-      </n-form>
+            <NButton @click="showLoginModal = false">取消</NButton>
+          </NSpace>
+        </NFormItem>
+      </NForm>
     </NCard>
   </NModal>
 </template>

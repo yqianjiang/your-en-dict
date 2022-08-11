@@ -10,6 +10,7 @@ import {
 import { userDict } from "@/utils/dict/userDict.js";
 import { getTranslationBatch } from "@/services/dict.js";
 import WordList from "@/components/wordList.vue";
+import { NSelect } from "naive-ui";
 
 const data = reactive({
   title: "",
