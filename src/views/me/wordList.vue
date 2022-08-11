@@ -2,6 +2,7 @@
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { userDict } from "@/utils/dict/userDict.js";
 import { getTranslationBatch } from "@/services/dict.js";
+import WordList from "@/components/wordList.vue"
 
 const data = reactive({
   title: "",
@@ -15,7 +16,7 @@ const type = ref("unknown");
 const loadWordDict = async () => {
   const trans = await getTranslationBatch({
     words: data.wordList,
-    onlyTranslation: true,
+    onlyTranslation: false,
   });
   Object.assign(data.wordDict, trans);
   console.log(data.wordDict);
@@ -51,34 +52,13 @@ onBeforeUnmount(() => {
       {{ data.allowRemove ? "取消" : "" }}编辑
     </button> -->
   </div>
-  <div>
-    <div class="word-box" v-for="word in data.wordList">
-      <template v-if="data.wordDict[word]?.translation">
-        <a :href="'#/me/' + word">{{ word }}</a>
-        <div class="word-translation" v-if="data.showTranslations">
-          {{ data.wordDict[word]?.translation }}
-        </div>
-      </template>
-      <a v-else>{{ word }}</a>
-      <!-- <button class="button-right" v-if="data.allowRemove">
-        移到{{ type === "known" ? "生词" : "熟词" }}
-      </button> -->
-      <hr />
-    </div>
+  <div class="word-list">
+    <WordList :words="data.wordList" :wordDict="data.wordDict" />
   </div>
 </template>
 
 <style scoped>
-.word-box {
-  position: relative;
-}
-.button-right {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.word-translation {
-  white-space: pre-line;
+.word-list {
+  text-align: left;
 }
 </style>

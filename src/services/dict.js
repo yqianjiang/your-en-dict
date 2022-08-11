@@ -6,6 +6,7 @@ function format(_meaning) {
       _meaning[key] = _meaning[key].replaceAll("\\n", "\n");
     }
   }
+  return _meaning;
 }
 
 export async function getTranslationBatch(params) {
@@ -18,9 +19,8 @@ export async function getTranslationBatch(params) {
     const res = await query.find();
     const resObj = {};
     for (const x of res) {
-      resObj[x.attributes.word] = x.attributes;
+      resObj[x.attributes.word] = format(x.attributes);
     }
-    format(resObj);
     return resObj;
   } catch (error) {
     console.log(error);
@@ -37,7 +37,7 @@ export async function getTranslation(word, onlyTranslation) {
   try {
     const res = await query.first();
     const _meaning = res?.attributes;
-    format(_meaning || {})
+    format(_meaning || {});
     return _meaning;
   } catch (error) {
     console.log(error);
