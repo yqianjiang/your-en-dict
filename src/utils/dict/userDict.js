@@ -44,7 +44,7 @@ class UserDict {
   _addKnownWord(word) {
     if (this.knownWords.includes(word)) return;
     if (this.unknownWords.includes(word)) {
-      this._removeUnknownWords(word);
+      this.removeUnknownWord(word);
     }
     this._knownWords[word] = this._genWordMeta(word);
   }
@@ -52,7 +52,7 @@ class UserDict {
     if (this.unknownWords.includes(word)) return;
     if (this.knownWords.includes(word)) {
       console.log("remove knownWord", word);
-      this._removeKnownWords(word);
+      this.removeKnownWord(word);
       console.log(this._knownWords[word]);
     }
     this._unknownWords[word] = this._genWordMeta(word);
@@ -80,10 +80,10 @@ class UserDict {
     }
   }
 
-  _removeKnownWords(word) {
+  removeKnownWord(word) {
     delete this._knownWords[word];
   }
-  _removeUnknownWords(word) {
+  removeUnknownWord(word) {
     delete this._unknownWords[word];
   }
 }

@@ -7,7 +7,20 @@ const props = defineProps({
     type: Object,
     default: {},
   },
+  showTranslations: {
+    type: Boolean,
+    default: true,
+  },
+  allowRemove: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+const emits = defineEmits(["remove"]);
+function onRemove(word) {
+  emits("remove", word);
+}
 </script>
 
 <template>
@@ -16,19 +29,31 @@ const props = defineProps({
       <n-space size="small">
         <a>{{ word }}</a
         ><n-tag type="info" size="small">{{ props.wordDict[word]?.frq }}</n-tag
-        ><template v-if="props.wordDict[word]?.tag"><n-tag size="small" v-for="tag in props.wordDict[word]?.tag?.split(' ')">{{
-          tag
-        }}</n-tag></template>
+        ><template v-if="props.wordDict[word]?.tag"
+          ><n-tag
+            size="small"
+            v-for="tag in props.wordDict[word]?.tag?.split(' ')"
+            >{{ tag }}</n-tag
+          ></template
+        >
       </n-space>
-      <div class="word-translation">
+      <div class="word-translation" v-show="props.showTranslations">
         {{ props.wordDict[word]?.translation }}
       </div>
     </template>
-    <a v-else>{{ word }}</a>
-    <!-- <button class="button-right" v-if="data.allowRemove">
-      移到{{ type === "known" ? "生词" : "熟词" }}
-    </button> -->
-    <hr />
+    <div v-else class="single-word">
+      <a>{{ word }}</a>
+    </div>
+    <n-button
+      size="small"
+      type="error"
+      secondary
+      class="button-right"
+      v-if="props.allowRemove"
+      @click="onRemove(word)"
+    >
+      移除
+    </n-button>
   </div>
 </template>
 
@@ -42,11 +67,12 @@ const props = defineProps({
 }
 .word-box {
   position: relative;
+  border-bottom: solid 1px gray;
+  padding: 8px 0;
 }
 .button-right {
   position: absolute;
   right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 4px;
 }
 </style>

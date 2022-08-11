@@ -12,6 +12,7 @@
     "deploy": "Bash deploy.sh"
   },
   "dependencies": {
+    "dexie": "^3.2.2",
     "js-md5": "^0.7.3",
     "leancloud-storage": "^4.13.1",
     "vue": "^3.2.37",

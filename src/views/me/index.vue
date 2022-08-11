@@ -32,7 +32,7 @@ if (getCurrentUser()) {
 
 function updateRatios() {
   const { known, unknown, unseen } = compare(
-    userDict.targetWords,
+    userDict.targetWords.map(x=>x[0]),
     userDict.knownWords,
     userDict.unknownWords
   );
@@ -129,25 +129,28 @@ async function syncDict() {
     <hr />
   </div>
   <div v-if="dictsLen.target">
-    <Popup btnText="目标词表" title="目标词表">
+    <Popup btnText="目标词表">
+      <template #header>
+        目标词表
+      </template>
       <n-tabs type="segment">
-        <n-tab-pane name="0" :tab="`生词 (共${targetWords.unknown.length}个)`">
+        <n-tab-pane name="0" :tab="`生词 (${targetWords.unknown.length})`">
           <WordList :words="targetWords.unknown" />
         </n-tab-pane>
         <n-tab-pane
           name="1"
-          :tab="`未标记词 (共${targetWords.unseen.length}个)`"
+          :tab="`未标记 (${targetWords.unseen.length})`"
         >
           <WordList :words="targetWords.unseen" />
         </n-tab-pane>
-        <n-tab-pane name="2" :tab="`熟词 (共${targetWords.known.length}个)`">
+        <n-tab-pane name="2" :tab="`熟词 (${targetWords.known.length})`">
           <WordList :words="targetWords.known" />
         </n-tab-pane>
       </n-tabs>
     </Popup>
     <div>(共{{ dictsLen.target }}个)</div>
     <div>
-      (未标记词{{ targetWords.unseen.length }}个，已标注词掌握{{
+      ({{ targetWords.unseen.length }}未标记，已标注掌握{{
         (
           (targetWords.known.length /
             (targetWords.known.length + targetWords.unknown.length)) *
