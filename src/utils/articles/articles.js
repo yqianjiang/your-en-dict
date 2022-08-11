@@ -123,6 +123,7 @@ class Articles {
         totalWords: article.totalWords,
         tag: tags[article.tag],
         ratio,
+        totalUniqueWords: article.wordsUnique.length,
         unknown,
         unseen,
       };

@@ -108,15 +108,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <h2>{{ article.title }}</h2>
+  <h2>{{ article.title }}</h2><n-tag type="info">
+      {{article.tag}}
+  </n-tag>
   <div class="sticky-top">
     <div>
       共{{ article.totalWords }}词，生词率{{
         (
-          ((data.unknownWord.length + data.unseenWord.length) /
+          (data.unknownWord.length /
             (data.knownWord.length +
-              data.unknownWord.length +
-              data.unseenWord.length)) *
+              data.unknownWord.length)) *
           100
         ).toFixed(2)
       }}%

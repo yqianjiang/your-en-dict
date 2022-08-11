@@ -100,8 +100,8 @@ watch(selectedOrder, reGetArticles);
     </n-tag>
     <div>
       {{ article.totalWords }}词 <span :style="article.unseen.length? 'color: gray;': ''">
-        - {{ (article.ratio * 100).toFixed(2) }}% 生词
-        <small v-if="article.unseen.length">({{ article.unseen.length }}未标注)</small>
+        - {{ (article.ratio * 100).toFixed(2) }}% 生词 ({{article.unknown.length}})
+        <small v-if="article.unseen.length">({{ article.unseen.length }} / {{article.totalUniqueWords}} 未标注)</small>
       </span>
     </div>
     <hr />

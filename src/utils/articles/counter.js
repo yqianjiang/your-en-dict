@@ -22,7 +22,7 @@ export function compare(words, wordsKnown, wordsUnknown) {
     }
   }
   return {
-    ratio: 1 - known.length / words.length,
+    ratio: unknown.length / (unknown.length + known.length),
     known,
     unknown,
     unseen,
