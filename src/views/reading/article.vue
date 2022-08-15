@@ -107,6 +107,7 @@ onMounted(async () => {
   const uuid = route.params.id;
   const result = await articlesHelper.getArticle(uuid);
   article.value = result;
+  document.title = result.title + ' - 你的定制英语词典';
   const { known, unknown, unseen } = compare(
     article.value.wordsUnique,
     userDict.knownWords,

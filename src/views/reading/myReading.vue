@@ -5,6 +5,8 @@ import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
 // import Uploader from "../../components/uploader.vue";
 
+document.title = 'myReading - 你的定制英语词典';
+
 const route = useRoute();
 const title = ref("我的阅读");
 const allArticles = reactive({
