@@ -1,5 +1,8 @@
 <script setup>
-import { NSpace, NTag, NButton } from 'naive-ui';
+import { computed } from "vue";
+import { NSpace, NTag, NButton } from "naive-ui";
+import { sortWords } from "@/utils/dict/sort.js";
+
 const props = defineProps({
   words: {
     type: Array,
@@ -16,16 +19,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  selectedOrder: {
+    type: String,
+    default: "createdAtDescending",
+  },
 });
 
 const emits = defineEmits(["remove"]);
 function onRemove(word) {
   emits("remove", word);
 }
+
+// 词汇排序
+const sortedWordList = computed(() => {
+  return sortWords(props.words, props.selectedOrder, props.wordDict);
+});
 </script>
 
 <template>
-  <div class="word-box" v-for="word in props.words">
+  <div class="word-box" v-for="word in sortedWordList">
     <template v-if="props.wordDict[word]?.translation">
       <n-space size="small">
         <a>{{ word }}</a

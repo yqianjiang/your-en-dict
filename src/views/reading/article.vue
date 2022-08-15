@@ -8,7 +8,8 @@ import { useRoute } from "vue-router";
 import { findLemma } from "@/utils/lemmatize.js";
 import Popup from "@/components/popup.vue";
 import WordList from "@/components/wordList.vue";
-import { NTabPane, NTabs, NTag } from "naive-ui";
+import { NTabPane, NTabs, NTag, NSelect, NSpace } from "naive-ui";
+import { sortWordsOptions } from "@/utils/dict/sort.js";
 
 const route = useRoute();
 const article = ref({});
@@ -24,6 +25,7 @@ const mode = reactive({
   showTrans: false,
   showByTokens: true,
 });
+const wordsOrder = ref(sortWordsOptions[0].value);
 
 const computeTranslation = (token) => {
   token = findLemma(token);
@@ -134,16 +136,26 @@ onBeforeUnmount(() => {
       {{ mode.markUnknownWord ? "停止标记" : "标记生词" }}
     </button>
     <button @click="onUpdateUserDict">更新词表</button>
-    <Popup btnText="显示词表" title="词表">
+    <Popup btnText="显示词表">
+      <template #header>
+        <NSpace>
+          词表
+          <NSelect
+            v-model:value="wordsOrder"
+            :options="sortWordsOptions"
+            placeholder="排序方式"
+          />
+        </NSpace>
+      </template>
       <NTabs type="segment">
         <NTabPane name="0" :tab="`生词 (共${data.unknownWord.length}个)`">
-          <WordList :words="data.unknownWord" :wordDict="data.translations" />
+          <WordList :words="data.unknownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
         </NTabPane>
         <NTabPane name="1" :tab="`未标记词 (共${data.unseenWord.length}个)`">
-          <WordList :words="data.unseenWord" :wordDict="data.translations" />
+          <WordList :words="data.unseenWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
         </NTabPane>
         <NTabPane name="2" :tab="`熟词 (共${data.knownWord.length}个)`">
-          <WordList :words="data.knownWord" :wordDict="data.translations" />
+          <WordList :words="data.knownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
         </NTabPane>
       </NTabs>
     </Popup>
@@ -189,6 +201,9 @@ onBeforeUnmount(() => {
 .translate-sentence {
   font-size: 0.75em;
   margin-bottom: 30px;
+}
+.n-space {
+  align-items: center;
 }
 @media (prefers-color-scheme: light) {
   .token--unknown {

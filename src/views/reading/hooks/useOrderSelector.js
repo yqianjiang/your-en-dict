@@ -1,4 +1,4 @@
-import { watch, computed, ref } from "vue";
+import { ref } from "vue";
 
 export function useOrderSelector() {
   const selectedOrder = ref("createdAtDescending");
