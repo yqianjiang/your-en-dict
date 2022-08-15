@@ -8,7 +8,7 @@ import { useRoute } from "vue-router";
 import { findLemma } from "@/utils/lemmatize.js";
 import Popup from "@/components/popup.vue";
 import WordList from "@/components/wordList.vue";
-import { NTabPane, NTabs, NTag, NSelect, NSpace } from "naive-ui";
+import { NTabPane, NTabs, NTag, NSelect, NSpace, NButton } from "naive-ui";
 import { sortWordsOptions } from "@/utils/dict/sort.js";
 
 const route = useRoute();
@@ -24,6 +24,7 @@ const mode = reactive({
   highlight: true,
   showTrans: false,
   showByTokens: true,
+  allowRemove: false,
 });
 const wordsOrder = ref(sortWordsOptions[0].value);
 
@@ -61,6 +62,8 @@ const onClickWord = async (e) => {
       delete data.translations[token];
     } else {
       data.unknownWord.push(token);
+      data.knownWord = data.knownWord.filter((x) => x !== token);
+      data.unseenWord = data.unseenWord.filter((x) => x !== token);
       _findWordTrans(token);
     }
   } else {
@@ -84,6 +87,21 @@ const onUpdateUserDict = () => {
   console.log(userDict.unknownWords);
   console.log(userDict.knownWords);
 };
+
+// bug: 移动后不影响高亮？
+function onRemove(type, word) {
+  if (type === 'unknown') {
+    data.knownWord.push(word);
+    data.unknownWord = data.unknownWord.filter((x) => x !== word);
+  } else if ( type==='known') {
+    data.unknownWord.push(word);
+    data.knownWord = data.knownWord.filter((x) => x !== word);
+  } else {
+    // unseen, 暂时移到熟词...
+    data.knownWord.push(word);
+    data.unseenWord = data.unseenWord.filter((x) => x !== word);
+  }
+}
 
 onMounted(async () => {
   const uuid = route.params.id;
@@ -145,17 +163,20 @@ onBeforeUnmount(() => {
             :options="sortWordsOptions"
             placeholder="排序方式"
           />
+          <NButton @click="mode.allowRemove = !mode.allowRemove">
+            {{ mode.allowRemove ? "取消" : "" }}编辑
+          </NButton>
         </NSpace>
       </template>
       <NTabs type="segment">
         <NTabPane name="0" :tab="`生词 (共${data.unknownWord.length}个)`">
-          <WordList :words="data.unknownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
+          <WordList :words="data.unknownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" :allowRemove="mode.allowRemove" @remove="(word)=>onRemove('unknown', word)" />
         </NTabPane>
         <NTabPane name="1" :tab="`未标记词 (共${data.unseenWord.length}个)`">
-          <WordList :words="data.unseenWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
+          <WordList :words="data.unseenWord" :wordDict="data.translations" :selectedOrder="wordsOrder" :allowRemove="mode.allowRemove" @remove="(word)=>onRemove('unseen', word)"/>
         </NTabPane>
         <NTabPane name="2" :tab="`熟词 (共${data.knownWord.length}个)`">
-          <WordList :words="data.knownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" />
+          <WordList :words="data.knownWord" :wordDict="data.translations" :selectedOrder="wordsOrder" :allowRemove="mode.allowRemove" @remove="(word)=>onRemove('known', word)" />
         </NTabPane>
       </NTabs>
     </Popup>
