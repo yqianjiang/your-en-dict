@@ -105,6 +105,8 @@ class Articles {
   }
 
   _formatArticles(batch, userDict) {
+    if (!Array.isArray(batch)) return [];
+
     const articles = batch.map((article) => {
       const { ratio, unknown, unseen } = compare(
         article.wordsUnique,
@@ -113,9 +115,9 @@ class Articles {
       );
 
       const tags = {
-        'ielts-reading': '阅读',
-        'ielts-listening': '听力',
-      }
+        "ielts-reading": "阅读",
+        "ielts-listening": "听力",
+      };
 
       return {
         uuid: article.objectId,

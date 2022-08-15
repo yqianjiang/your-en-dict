@@ -58,7 +58,16 @@ function reGetArticles() {
 }
 
 watch(tag, reGetArticles);
-watch(selectedOrder, reGetArticles);
+watch(selectedOrder, () => {
+  if (selectedOrder.value !== route.query.selectedOrder) {
+    location.replace(
+      `/#/reading/?${tag.value ? "tag=" + tag.value + "&" : ""}selectedOrder=${
+        selectedOrder.value
+      }`
+    );
+  }
+  reGetArticles();
+});
 
 // const showArticleUploader = ref(false);
 
@@ -70,18 +79,22 @@ watch(selectedOrder, reGetArticles);
 //   showArticleUploader.value = false;
 //   getArticles();
 // };
+
+if (route.query.selectedOrder) {
+  selectedOrder.value = route.query.selectedOrder;
+}
 </script>
 
 <template>
   <h1>{{ title }}</h1>
   <div>
     根据标签筛选：
-    <a v-if="tag" href="#/reading">All</a>
+    <a v-if="tag" :href="'#/reading'+(selectedOrder.value? '?selectedOrder=' + selectedOrder.value : '')">All</a>
     <span v-else>All</span>
     <span v-for="item in tags" :key="item.tag">
       |
       <span v-if="tag === item.tag">{{ item.label }}</span>
-      <a v-else :href="'#/reading?tag=' + item.tag">{{ item.label }}</a>
+      <a v-else :href="'#/reading?tag=' + item.tag + (selectedOrder.value? '&selectedOrder=' + selectedOrder.value : '')">{{ item.label }}</a>
     </span>
   </div>
   <n-select
@@ -96,13 +109,20 @@ watch(selectedOrder, reGetArticles);
     @cancel="showArticleUploader = false"
   /> -->
   <div v-for="article in articles" :key="article.uuid">
-    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a><n-tag type="info">
-      {{article.tag}}
+    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a
+    ><n-tag type="info">
+      {{ article.tag }}
     </n-tag>
     <div>
-      {{ article.totalWords }}词 <span :style="article.unseen.length? 'color: gray;': ''">
-        - {{ (article.ratio * 100).toFixed(2) }}% 生词 ({{article.unknown.length}})
-        <small v-if="article.unseen.length">({{ article.unseen.length }} / {{article.totalUniqueWords}} 未标注)</small>
+      {{ article.totalWords }}词
+      <span :style="article.unseen.length ? 'color: gray;' : ''">
+        - {{ (article.ratio * 100).toFixed(2) }}% 生词 ({{
+          article.unknown.length
+        }})
+        <small v-if="article.unseen.length"
+          >({{ article.unseen.length }} /
+          {{ article.totalUniqueWords }} 未标注)</small
+        >
       </span>
     </div>
     <hr />
