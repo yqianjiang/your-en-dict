@@ -49,7 +49,6 @@ const getArticles = async () => {
   }
   loading.value = false;
 };
-getArticles();
 
 function reGetArticles() {
   articles.value = [];
@@ -66,7 +65,7 @@ watch(selectedOrder, () => {
       }`
     );
   }
-  reGetArticles();
+  // reGetArticles();
 });
 
 // const showArticleUploader = ref(false);
@@ -83,18 +82,21 @@ watch(selectedOrder, () => {
 if (route.query.selectedOrder) {
   selectedOrder.value = route.query.selectedOrder;
 }
+getArticles();
+
+const urlQuery = computed(()=>selectedOrder.value? '?selectedOrder=' + selectedOrder.value : '')
 </script>
 
 <template>
   <h1>{{ title }}</h1>
   <div>
     根据标签筛选：
-    <a v-if="tag" :href="'#/reading'+(selectedOrder.value? '?selectedOrder=' + selectedOrder.value : '')">All</a>
+    <a v-if="tag" :href="'#/reading'+urlQuery">All</a>
     <span v-else>All</span>
     <span v-for="item in tags" :key="item.tag">
       |
       <span v-if="tag === item.tag">{{ item.label }}</span>
-      <a v-else :href="'#/reading?tag=' + item.tag + (selectedOrder.value? '&selectedOrder=' + selectedOrder.value : '')">{{ item.label }}</a>
+      <a v-else :href="'#/reading?tag=' + item.tag + urlQuery">{{ item.label }}</a>
     </span>
   </div>
   <n-select
