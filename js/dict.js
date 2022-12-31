@@ -1,4 +1,4 @@
-import{L as Bn}from"./lc.js";/*! *****************************************************************************
+import{L as Bn}from"./-plugin-vue-export-helper.js";/*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted.
