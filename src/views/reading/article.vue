@@ -129,7 +129,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <h2>{{ article.title }}</h2><NTag type="info">
+  <h2>{{ article.title }}</h2>
+  <NTag type="info" v-if="article.tag">
       {{article.tag}}
   </NTag>
   <div class="sticky-top">

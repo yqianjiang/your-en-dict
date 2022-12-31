@@ -9,25 +9,32 @@ import { fetchArticleBatch, fetchArticle } from "@/services/article";
 
 const nlp = winkNLP(model);
 
-// function tokenize(plainText, title) {
-//   const doc = nlp.readDoc(plainText);
-//   const tokens = doc.tokens().filter((t) => t.out(its.type) === "word");
-//   const wordsFreq = tokens.out(its.lemma, as.freqTable);
-//   const wordsUnique = wordsFreq.map((arr) => arr[0]);
-//   const sentences = doc.sentences().out();
-//   tokens.each((e) => e.markup());
-//   doc.sentences().each((e) => e.markup());
-//   const markedTokenText = doc.out(its.markedUpText);
-//   title = title || sentences.splice(0, 1)[0];
-//   return {
-//     title,
-//     plainText,
-//     markedTokenText,
-//     totalWords: tokens.out().length,
-//     wordsUnique,
-//     wordsFreq,
-//   };
-// }
+function tokenize(plainText, title) {
+  const doc = nlp.readDoc(plainText);
+  const tokens = doc.tokens().filter((t) => t.out(its.type) === "word");
+  const wordsFreq = tokens.out(its.lemma, as.freqTable);
+  const wordsUnique = wordsFreq.map((arr) => arr[0]);
+  const sentences = doc.sentences().out();
+  // tokens.each((e) => e.markup());
+  // doc.sentences().each((e) => e.markup());
+  // const markedTokenText = doc.out(its.markedUpText);
+  title = title || sentences.splice(0, 1)[0];
+  return {
+    title,
+    plainText,
+    // markedTokenText,
+    totalWords: tokens.out().length,
+    wordsUnique,
+    // wordsFreq,
+    sentences: sentences.map(x=>{
+      return [{
+        sentence: x,
+        translation: '',
+        tokens: nlp.readDoc(x).tokens().filter(t => t.out(its.type) === 'word').out(),
+      }]
+    }),
+  };
+}
 
 function splitCNSentence(text) {
   if (text) {
@@ -42,6 +49,7 @@ class Articles {
     this.articles = [];
     this.openedArticles = {};
     this.markedArticles = {};
+    this.localArticles = {};
     // this.loadedArticles = [];
     this.load();
   }
@@ -50,12 +58,14 @@ class Articles {
     this.articles = getLocal("articles") || [];
     this.openedArticles = getLocal("openedArticles2") || {};
     this.markedArticles = getLocal("markedArticles2") || {};
+    this.localArticles = getLocal("localArticles2") || {};
   }
 
   save() {
     setLocal("articles", this.articles);
     setLocal("openedArticles2", this.openedArticles);
     setLocal("markedArticles2", this.markedArticles);
+    setLocal("localArticles2", this.localArticles);
   }
 
   // updateArticle(uuid, plainText, title) {
@@ -70,27 +80,31 @@ class Articles {
   //   this.save();
   // }
 
-  // async addArticle(plainText, title) {
+  async addArticle(plainText, title) {
 
-  //   const uuid = md5(plainText);
+    const uuid = md5(plainText);
 
-  //   // 文章已存在，更新？
-  //   if (this.articles.find((article) => article.uuid === uuid)) {
-  //     this.updateArticle(uuid, plainText, title);
-  //     return;
-  //   }
+    // 文章已存在，更新？
+    if (this.localArticles[uuid]) {
+      //   this.updateArticle(uuid, plainText, title);
+      //   return;
+    }
 
-  //   const article = tokenize(plainText, title);
+    const article = tokenize(plainText, title);
+    article.objectId = uuid;
+    
+    this.localArticles[uuid] = article;
+    this.save();
 
-  //   this.articles.push({ uuid, ...article });
-  //   this.save();
-  // }
+    return article;
+  }
 
   async getArticle(uuid) {
     // 从本地缓存中读取
     const article =
       this.openedArticles[uuid] ||
       this.markedArticles[uuid] ||
+      this.localArticles[uuid] ||
       (await fetchArticle(uuid));
     if (article.tokens) return article;
 
@@ -163,6 +177,14 @@ class Articles {
 
   getMarkedArticles(userDict) {
     const batch = Object.values(this.markedArticles);
+    if (batch.length) {
+      return this._formatArticles(batch, userDict);
+    }
+    return batch;
+  }
+
+  getLocalArticles(userDict) {
+    const batch = Object.values(this.localArticles);
     if (batch.length) {
       return this._formatArticles(batch, userDict);
     }
