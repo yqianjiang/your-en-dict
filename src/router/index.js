@@ -5,7 +5,7 @@ const routes = [
     path: "/reading",
     name: "Reading",
     component: () =>
-      import(/* @vite-ignore */ "../views/reading/index.vue"),
+      import(/* @vite-ignore */ "../views/reading/reading.vue"),
     meta: {
       order: 1,
       transition: "fade",
@@ -35,7 +35,7 @@ const routes = [
     path: "/me",
     name: "Me",
     component: () =>
-      import(/* @vite-ignore */ "../views/me/index.vue"),
+      import(/* @vite-ignore */ "../views/me/me.vue"),
     meta: {
       order: 2,
       transition: "fade",
@@ -44,7 +44,7 @@ const routes = [
   {
     path: "/me/word-list",
     name: "WordList",
-    component: () => import(/* @vite-ignore */ "../views/me/wordList.vue"),
+    component: () => import(/* @vite-ignore */ "../views/me/myWordList.vue"),
     meta: {
       order: 1,
       transition: "slide-left",
@@ -53,7 +53,7 @@ const routes = [
   {
     path: "/me/:id",
     name: "Word",
-    component: () => import(/* @vite-ignore */ "../views/me/word.vue"),
+    component: () => import(/* @vite-ignore */ "../views/me/myWord.vue"),
     meta: {
       order: 1,
       transition: "slide-left",
