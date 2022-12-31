@@ -10,11 +10,10 @@ yarn build
 cd dist
 
 git init
-git checkout main
 git add -A
 git commit -m 'deploy'
 
 # 如果你要部署在 https://<USERNAME>.github.io/<REPO>
-git push -f git@github.com:yqianjiang/your-en-dict.git main:gh-pages
+git push -f git@github.com:yqianjiang/your-en-dict.git master:gh-pages
 
 cd -
