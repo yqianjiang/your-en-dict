@@ -23,7 +23,7 @@ const routes = [
     path: "/reading",
     name: "Reading",
     component: () =>
-      import(/* @vite-ignore */ "../views/reading/ielts.vue"),
+      import(/* @vite-ignore */ "../views/reading/reading.vue"),
     meta: {
       order: 1,
       transition: "fade",

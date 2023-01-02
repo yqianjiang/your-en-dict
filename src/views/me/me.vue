@@ -32,7 +32,7 @@ if (getCurrentUser()) {
 
 function updateRatios() {
   const { known, unknown, unseen } = compare(
-    userDict.targetWords.map(x=>x[0]),
+    userDict.targetWords,
     userDict.knownWords,
     userDict.unknownWords
   );
