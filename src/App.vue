@@ -35,9 +35,6 @@ const menuOptions = [
 </script>
 
 <template>
-  <!-- <a href="#/">新增文章</a> | <a href="#/archives">本地文章</a> |
-  <a href="#/reading">雅思文章</a> | <a href="#/my-reading">正在读的文章</a> |
-  <a href="#/me">Me</a> -->
   <NaiveTheme>
     <NMessageProvider>
       <NMenu

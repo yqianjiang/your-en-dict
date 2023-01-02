@@ -163,7 +163,7 @@ async function syncDict() {
     </Popup>
     <div>(共{{ dictsLen.target }}个)</div>
     <div>
-      ({{ targetWords.unseen.length }}未标记，已标注掌握{{
+      ({{ targetWords.unseen.length }}未标记，已标记掌握{{
         (
           (targetWords.known.length /
             (targetWords.known.length + targetWords.unknown.length)) *

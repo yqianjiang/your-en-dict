@@ -43,6 +43,6 @@ function clear() {
         }})</p
       >
       <p>生词{{ data.unknown.length }}词(目标{{ data.unknownTargetWords.length }})</p>
-      <p>未标注词{{ data.unseen.length }}词(目标{{ data.unseenTargetWords.length }})</p>
+      <p>未标记词{{ data.unseen.length }}词(目标{{ data.unseenTargetWords.length }})</p>
     </div>
 </template>

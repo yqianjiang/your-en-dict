@@ -34,14 +34,14 @@ const stats = computed(() => {
       {{ article.totalWords }}词
       <span :style="stats.nUnseen ? 'color: gray;' : ''">
         - {{ stats.unknownRatio }}% 生词 ({{ stats.nUnknown }})
-        <small v-if="stats.nUnseen">({{ stats.nUnseen }}未标注)</small>
+        <small v-if="stats.nUnseen">({{ stats.nUnseen }}未标记)</small>
       </span>
     </div>
     <div class="stats-info">
       {{ stats.targetRatio }}%目标词({{ article.targetWords.length }})
       <small :style="stats.nUnseenTarget ? 'color: gray;' : ''">
         ({{ stats.nUnknownTarget }}生词<span v-if="stats.nUnseenTarget"
-          >, {{ stats.nUnseenTarget }} 未标注)</span
+          >, {{ stats.nUnseenTarget }} 未标记)</span
         >
         <span v-else>)</span>
       </small>
