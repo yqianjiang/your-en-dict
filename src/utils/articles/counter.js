@@ -11,6 +11,7 @@ export function compare(words, wordsKnown, wordsUnknown) {
   const known = [];
   const unknown = [];
   const unseen = [];
+
   for (let word of words) {
     word = findLemma(word);
     if (wordsKnown.includes(word)) {

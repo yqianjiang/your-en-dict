@@ -36,14 +36,6 @@ function tokenize(plainText, title) {
   };
 }
 
-function splitCNSentence(text) {
-  if (text) {
-    return text.split("。");
-  } else {
-    return [];
-  }
-}
-
 class Articles {
   constructor() {
     this.articles = [];
@@ -99,6 +91,13 @@ class Articles {
     return article;
   }
 
+  analyzeArticle(userDict, plainText, title) {
+    const uuid = md5(plainText);
+    const article = tokenize(plainText, title);
+    article.objectId = uuid;
+    return this._formatArticles([article], userDict);
+  }
+
   async getArticle(uuid) {
     // 从本地缓存中读取
     const article =
@@ -125,7 +124,14 @@ class Articles {
       const { ratio, unknown, unseen } = compare(
         article.wordsUnique,
         userDict.knownWords,
-        userDict.unknownWords
+        userDict.unknownWords,
+      );
+
+      const targetWords = article.wordsUnique.filter(w=>userDict.targetWords.includes(w));
+      const { unknown: unknownTargetWords, unseen: unseenTargetWords, known: knownTargetWords  } = compare(
+        targetWords,
+        userDict.knownWords,
+        userDict.unknownWords,
       );
 
       const tags = {
@@ -142,6 +148,10 @@ class Articles {
         totalUniqueWords: article.wordsUnique.length,
         unknown,
         unseen,
+        targetWords,
+        unknownTargetWords,
+        unseenTargetWords,
+        knownTargetWords,
       };
     });
 

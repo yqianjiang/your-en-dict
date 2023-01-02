@@ -2,6 +2,12 @@ import { createRouter, createWebHashHistory } from "vue-router";
 
 const routes = [
   {
+    path: "/",
+    name: "Home",
+    component: () =>
+      import(/* @vite-ignore */ "../views/home/home.vue"),
+  },
+  {
     path: "/reading",
     name: "Reading",
     component: () =>

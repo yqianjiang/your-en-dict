@@ -72,9 +72,22 @@ function addWordsFromJson(jsonData) {
   showUploader.value = false;
 }
 function addTargetWords(jsonData) {
-  userDict.targetWords = JSON.parse(jsonData);
-  userDict.save();
-  showUploader2.value = false;
+  if (typeof jsonData === 'string') {
+    try {
+      jsonData = jsonData.trim().split('\n');
+    } catch (error) {
+      console.log('文本格式需要为每行一个单词')
+    }
+  } else {
+    try {
+      jsonData = JSON.parse(jsonData);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  userDict.targetWords = jsonData;
+  // userDict.save();
+  // showUploader2.value = false;
   updateDictsLen();
 }
 async function syncDict() {

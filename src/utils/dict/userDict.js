@@ -21,11 +21,19 @@ class UserDict {
     return Object.keys(this._seenWords);
   }
 
+  get knownTargetWords() {
+    return this.targetWords.filter(x=>(x in this._knownWords));
+  }
+
+  get unknownTargetWords() {
+    return this.targetWords.filter(x=>(x in this._knownWords));
+  }
+
   load() {
     this._knownWords = getLocal("knownWords") || {};
     this._unknownWords = getLocal("unknownWords") || {};
     this._seenWords = getLocal("seenWords") || {};
-    this.targetWords = getLocal("targetWords") || {};
+    this.targetWords = getLocal("targetWords") || [];
   }
 
   save() {
