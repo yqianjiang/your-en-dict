@@ -1,6 +1,6 @@
 <script setup>
 import { watch, computed, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useOrderSelector } from "./hooks/useOrderSelector.js";
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
@@ -8,6 +8,7 @@ import { NSelect, NSpin } from "naive-ui";
 import ReadingListItem from "@/components/ReadingListItem.vue";
 
 const route = useRoute();
+const router = useRouter();
 const { selectedOrder, orderOptions } = useOrderSelector();
 
 const BATCH_SIZE = 10;
@@ -59,13 +60,16 @@ function reGetArticles() {
 watch(tag, reGetArticles);
 watch(selectedOrder, () => {
   if (selectedOrder.value !== route.query.selectedOrder) {
-    location.replace(
-      `/#/reading/?${tag.value ? "tag=" + tag.value + "&" : ""}selectedOrder=${
-        selectedOrder.value
-      }`
+    router.push(
+      {
+        query: {
+          ...route.query,
+          selectedOrder: selectedOrder.value,
+        }
+      }
     );
+    reGetArticles();
   }
-  // reGetArticles();
 });
 
 // const showArticleUploader = ref(false);
@@ -84,19 +88,18 @@ if (route.query.selectedOrder) {
 }
 getArticles();
 
-const urlQuery = computed(()=>selectedOrder.value? '?selectedOrder=' + selectedOrder.value : '')
 </script>
 
 <template>
   <h1>{{ title }}</h1>
   <div>
     根据标签筛选：
-    <a v-if="tag" :href="'#/reading'+urlQuery">All</a>
+    <router-link v-if="tag" :to="{query:{...route.query,tag: ''}}">All</router-link>
     <span v-else>All</span>
     <span v-for="item in tags" :key="item.tag">
       |
       <span v-if="tag === item.tag">{{ item.label }}</span>
-      <a v-else :href="'#/reading?tag=' + item.tag + urlQuery">{{ item.label }}</a>
+      <router-link v-else :to="{query:{...route.query,tag: item.tag}}">{{ item.label }}</router-link>
     </span>
   </div>
   <n-select
