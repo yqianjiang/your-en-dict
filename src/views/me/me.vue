@@ -86,8 +86,8 @@ function addTargetWords(jsonData) {
     }
   }
   userDict.targetWords = jsonData;
-  // userDict.save();
-  // showUploader2.value = false;
+  userDict.save();
+  showUploader2.value = false;
   updateDictsLen();
 }
 async function syncDict() {

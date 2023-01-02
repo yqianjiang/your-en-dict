@@ -8,10 +8,22 @@ const routes = [
       import(/* @vite-ignore */ "../views/home/home.vue"),
   },
   {
+    path: "/archives",
+    name: "Archives",
+    component: () =>
+      import(/* @vite-ignore */ "../views/reading/local.vue"),
+  },
+  {
+    path: "/ielts",
+    name: "Ielts",
+    component: () =>
+      import(/* @vite-ignore */ "../views/reading/ielts.vue"),
+  },
+  {
     path: "/reading",
     name: "Reading",
     component: () =>
-      import(/* @vite-ignore */ "../views/reading/reading.vue"),
+      import(/* @vite-ignore */ "../views/reading/ielts.vue"),
     meta: {
       order: 1,
       transition: "fade",
