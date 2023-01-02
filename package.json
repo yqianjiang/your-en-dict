@@ -1,19 +1,34 @@
 {
   "name": "your-en-dict",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "deploy": "Bash deploy.sh"
   },
   "dependencies": {
-    "vant": "^3.5.2",
-    "vue": "^3.2.37"
+    "dexie": "^3.2.2",
+    "js-md5": "^0.7.3",
+    "leancloud-storage": "^4.13.1",
+    "vue": "^3.2.37",
+    "vue-router": "4",
+    "wink-eng-lite-web-model": "^1.4.1",
+    "wink-lemmatizer": "^3.0.2",
+    "wink-nlp": "^1.12.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.0",
-    "vite": "^3.0.0"
+    "@vue/test-utils": "^2.0.2",
+    "c8": "^7.12.0",
+    "jsdom": "^20.0.0",
+    "naive-ui": "^2.32.1",
+    "unplugin-vue-components": "^0.22.0",
+    "vite": "^3.0.0",
+    "vitest": "^0.19.1"
   }
 }

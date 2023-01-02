@@ -1,17 +1,16 @@
-<script setup>
-import { ref } from 'vue'
-
-defineProps({
-  msg: String
-})
-
-const count = ref(0)
+<script setup lang="ts">
+import { computed, ref } from "vue";
+const props = defineProps({
+  count: { type: Number, required: true },
+});
+const times = ref(2);
+const result = computed(() => props.count * times.value);
+defineExpose(props);
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <div>{{ count }} x {{ times }} = {{ result }}</div>
+  <button @click="times += 1">x1</button>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
