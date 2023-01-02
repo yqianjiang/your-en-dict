@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
 import Uploader from "@/components/uploader.vue";
+import ReadingListItem from "@/components/ReadingListItem.vue";
 
 document.title = 'myReading - 你的定制英语词典';
 
@@ -76,18 +77,7 @@ const addArticle = async (text) => {
     @submit="addArticle"
     @cancel="showArticleUploader = false"
   />
-  <div v-for="article in articles" :key="article.uuid">
-    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a>
-    <div>
-      共{{ article.totalWords }}词，生词率：{{
-        (article.ratio * 100).toFixed(2)
-      }}%
-      <small v-if="article.unseen.length"
-        >({{ article.unseen.length }}词未标注)</small
-      >
-    </div>
-    <hr />
-  </div>
+  <ReadingListItem :article="article" v-for="article in articles" :key="article.uuid"></ReadingListItem>
 </template>
 
 <style scoped></style>

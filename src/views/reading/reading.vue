@@ -4,8 +4,8 @@ import { useRoute } from "vue-router";
 import { useOrderSelector } from "./hooks/useOrderSelector.js";
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
-import { NSelect, NSpin, NTag } from "naive-ui";
-// import Uploader from "../../components/uploader.vue";
+import { NSelect, NSpin } from "naive-ui";
+import ReadingListItem from "@/components/ReadingListItem.vue";
 
 const route = useRoute();
 const { selectedOrder, orderOptions } = useOrderSelector();
@@ -104,31 +104,7 @@ const urlQuery = computed(()=>selectedOrder.value? '?selectedOrder=' + selectedO
     :options="orderOptions"
     placeholder="请选择文章排序"
   />
-  <!-- <button @click="onShowUploader">新增文章</button> -->
-  <!-- <Uploader
-    v-show="showArticleUploader"
-    @submit="addArticle"
-    @cancel="showArticleUploader = false"
-  /> -->
-  <div v-for="article in articles" :key="article.uuid">
-    <a :href="'#/reading/' + article.uuid">{{ article.title }}</a
-    ><n-tag type="info">
-      {{ article.tag }}
-    </n-tag>
-    <div>
-      {{ article.totalWords }}词
-      <span :style="article.unseen.length ? 'color: gray;' : ''">
-        - {{ (article.ratio * 100).toFixed(2) }}% 生词 ({{
-          article.unknown.length
-        }})
-        <small v-if="article.unseen.length"
-          >({{ article.unseen.length }} /
-          {{ article.totalUniqueWords }} 未标注)</small
-        >
-      </span>
-    </div>
-    <hr />
-  </div>
+  <ReadingListItem :article="article" v-for="article in articles" :key="article.uuid"></ReadingListItem>
   <div>
     <n-spin :show="loading" size="small">
       <button v-if="showLoadMore" @click="getArticles">加载更多</button>
