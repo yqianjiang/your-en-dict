@@ -7,7 +7,7 @@ import {
 } from "vue";
 import { userDict } from "@/utils/dict/userDict.js";
 import { getTranslationBatch } from "@/services/dict.js";
-import WordList from "@/components/wordList.vue";
+import WordList from "@/components/WordList.vue";
 import { NSelect } from "naive-ui";
 import { sortWordsOptions } from "@/utils/dict/sort.js";
 

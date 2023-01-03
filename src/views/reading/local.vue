@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { userDict } from "@/utils/dict/userDict.js";
-// import Uploader from "@/components/uploader.vue";
+// import Uploader from "@/components/Uploader.vue";
 import ReadingListItem from "@/components/ReadingListItem.vue";
 
 document.title = '本地文章 - 你的定制英语词典';

@@ -5,10 +5,10 @@ import { compare } from "@/utils/articles/counter.js";
 import { getCurrentUser } from "@/services/user.js";
 import { syncUserDict } from "@/services/userDict.js";
 import { NButton, NTabs, NTabPane } from "naive-ui";
-import Uploader from "@/components/uploader.vue";
+import Uploader from "@/components/Uploader.vue";
 import LoginForm from "@/components/LoginForm.vue";
-import Popup from "@/components/popup.vue";
-import WordList from "@/components/wordList.vue";
+import Popup from "@/components/Popup.vue";
+import WordList from "@/components/WordList.vue";
 
 const msg = ref("Me");
 const showUploader = ref(false);
