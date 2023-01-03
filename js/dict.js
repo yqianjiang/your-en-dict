@@ -1,4 +1,4 @@
-import{L as Bn}from"./lc1.js";/*! *****************************************************************************
+import{L as Bn}from"./lc.js";/*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted.
