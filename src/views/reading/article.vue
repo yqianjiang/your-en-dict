@@ -1,11 +1,14 @@
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
+
+import ReadingView from "@/components/ReadingView.vue";
+import WordListPopup from "@/components/WordListPopup.vue";
+
 import { articlesHelper } from "@/utils/articles/articles.js";
 import { compare } from "@/utils/articles/counter.js";
 import { userDict } from "@/utils/dict/userDict.js";
 import { getTranslation, getTranslationBatch } from "@/services/dict.js";
-import ReadingView from "@/components/ReadingView.vue";
 
 const route = useRoute();
 const article = ref({});
@@ -98,7 +101,9 @@ onBeforeUnmount(() => {
     @update-user-dict="onUpdateUserDict"
     :onRemove="onRemove"
     :toggleTrans="toggleTrans"
-  />
+  >
+    <WordListPopup :data="data" :onRemove="onRemove" />
+  </ReadingView>
 </template>
 
 <style scoped>
