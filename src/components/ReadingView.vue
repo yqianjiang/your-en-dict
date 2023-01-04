@@ -2,7 +2,7 @@
 import { reactive } from "vue";
 import { NTag } from "naive-ui";
 import { findLemma } from "@/utils/lemmatize.js";
-import { useDictData } from './useDictData';
+import { useDictData } from '@/hooks/useDictData';
 import WordListPopup from "@/components/WordListPopup.vue";
 
 const { article } = defineProps({
