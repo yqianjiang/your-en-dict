@@ -60,18 +60,6 @@ class Articles {
     setLocal("localArticles2", this.localArticles);
   }
 
-  // updateArticle(uuid, plainText, title) {
-  //   const article = this.articles.find((article) => article.uuid === uuid);
-  //   if (md5(plainText) === uuid && title) {
-  //     // 内容不变，有新标题，只需要更新标题
-  //     article.title = title;
-  //   } else {
-  //     const newArticle = tokenize(plainText, title);
-  //     Object.assign(article, newArticle);
-  //   }
-  //   this.save();
-  // }
-
   async addArticle(plainText, title) {
 
     const uuid = md5(plainText);
@@ -91,13 +79,34 @@ class Articles {
     return article;
   }
 
+  /**
+   * 用户输入plainText，输出文章和统计信息
+   * @param {UserDict} userDict 
+   * @param {string} plainText 
+   * @param {string} title 
+   * @returns {ArticleStatsInfo[], Article}
+   */
   analyzeArticle(userDict, plainText, title) {
     const uuid = md5(plainText);
     const article = tokenize(plainText, title);
     article.objectId = uuid;
-    return this._formatArticles([article], userDict);
+    return {stats: this._computeStatsInfo([article], userDict), article};
   }
 
+  /**
+   * 把文章保存到本地
+   * @param {Article} article 
+   */
+  saveArticle(article) {
+    this.localArticles[article.objectId] = article;
+    this.save();
+  }
+
+  /**
+   * 获取单篇文章的详细内容
+   * @param {string} uuid 
+   * @returns Article
+   */
   async getArticle(uuid) {
     // 从本地缓存中读取
     const article =
@@ -105,7 +114,7 @@ class Articles {
       this.markedArticles[uuid] ||
       this.localArticles[uuid] ||
       (await fetchArticle(uuid));
-    if (article.tokens) return article;
+    if (article?.tokens) return article;
 
     article.sentences.forEach((x) => {
       x.forEach((y) => {
@@ -117,7 +126,13 @@ class Articles {
     return article;
   }
 
-  _formatArticles(batch, userDict) {
+  /**
+   * 根据userDict，对文章列表进行统计，计算生词率等。
+   * @param {Article[]} batch 
+   * @param {UserDict} userDict 
+   * @returns ArticleStatsInfo[] 
+   */
+  _computeStatsInfo(batch, userDict) {
     if (!Array.isArray(batch)) return [];
 
     const articles = batch.map((article) => {
@@ -164,7 +179,7 @@ class Articles {
    * @param {string} tag
    * @param {number} startIdx
    * @param {number} batchSize
-   * @returns
+   * @returns ArticleStatsInfo[] 
    */
   async getArticleBatch(userDict, tag, startIdx = 0, batchSize = 10, orderBy) {
     const batch = await fetchArticleBatch({
@@ -174,13 +189,15 @@ class Articles {
       orderBy,
     });
 
-    return this._formatArticles(batch, userDict);
+    return this._computeStatsInfo(batch, userDict);
   }
+
+  // 从本地获取对应的文章列表，returns ArticleStatsInfo[]
 
   getOpenedArticles(userDict) {
     const batch = Object.values(this.openedArticles);
     if (batch.length) {
-      return this._formatArticles(batch, userDict);
+      return this._computeStatsInfo(batch, userDict);
     }
     return batch;
   }
@@ -188,7 +205,7 @@ class Articles {
   getMarkedArticles(userDict) {
     const batch = Object.values(this.markedArticles);
     if (batch.length) {
-      return this._formatArticles(batch, userDict);
+      return this._computeStatsInfo(batch, userDict);
     }
     return batch;
   }
@@ -196,7 +213,7 @@ class Articles {
   getLocalArticles(userDict) {
     const batch = Object.values(this.localArticles);
     if (batch.length) {
-      return this._formatArticles(batch, userDict);
+      return this._computeStatsInfo(batch, userDict);
     }
     return batch;
   }

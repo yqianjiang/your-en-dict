@@ -10,6 +10,7 @@ import LoginForm from "@/components/LoginForm.vue";
 import Popup from "@/components/Popup.vue";
 import WordList from "@/components/WordList.vue";
 
+document.title = "Me - 你的定制英语词典";
 const msg = ref("Me");
 const showUploader = ref(false);
 const showUploader2 = ref(false);

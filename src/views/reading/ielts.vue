@@ -15,6 +15,7 @@ const BATCH_SIZE = 10;
 let pageIdx = 0;
 
 const title = ref("雅思文章");
+document.title = "雅思文章 - 你的定制英语词典";
 const loading = ref(true);
 const tag = computed(() => route.query.tag);
 const tags = ref([

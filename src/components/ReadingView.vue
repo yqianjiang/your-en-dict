@@ -2,26 +2,24 @@
 import { reactive } from "vue";
 import { NTag } from "naive-ui";
 import { findLemma } from "@/utils/lemmatize.js";
+import { useDictData } from './useDictData';
+import WordListPopup from "@/components/WordListPopup.vue";
 
-const { article, data, toggleTrans, onRemove } = defineProps({
+const { article } = defineProps({
   article: {
     type: Object,
-  },
-  data: {
-    type: Object,
-  },
-  toggleTrans: {
-    type: Function,
-  },
-  onRemove: {
-    type: Function,
   },
 });
 
 const emits = defineEmits(['updateUserDict']);
 
+console.log('article', article);
+console.log('article.wordsUnique', article.wordsUnique);
+const { data, toggleTrans, updateUserDict, onRemove } = useDictData(article.wordsUnique);
+
 const onUpdateUserDict = () => {
   emits('updateUserDict');
+  updateUserDict();
   mode.markUnknownWord = false;
 };
 
@@ -93,7 +91,7 @@ const onClickWord = async (e) => {
       {{ mode.markUnknownWord ? "停止标记" : "开始标记" }}
     </button>
     <button @click="onUpdateUserDict">更新词表</button>
-    <slot></slot>
+    <WordListPopup :data="data" :onRemove="onRemove" />
   </div>
   <p class="article">
     <p v-for="(paragraph, idx) in article.sentences" :key="'paragraph'+idx">
