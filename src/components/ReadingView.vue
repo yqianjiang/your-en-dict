@@ -69,7 +69,7 @@ const highlightOptions = [{label: '生词', value: 'unknown'}, {label: '未标�
   <NTag type="info" v-if="article.tag"> {{ article.tag }} </NTag>
   <div class="sticky-top">
     <div class="stats-info"> 共{{ article.totalWords }}词，生词率{{ ((data.unknownWord.length / article.wordsUnique.length) * 100).toFixed(2) }}%，目标词率{{ ((data.targetWord.length / article.wordsUnique.length) * 100).toFixed(2) }}% </div>
-    <NSpace>
+    <NSpace vertical class="toolbar">
       <NSpace> 显示设置： <NSwitch v-if="Object.keys(data.translations).length" v-model:value="mode.showTrans">
           <template #checked> 单词翻译 </template>
           <template #unchecked> 单词翻译 </template>
@@ -116,6 +116,13 @@ const highlightOptions = [{label: '生词', value: 'unknown'}, {label: '未标�
 </template>
 
 <style scoped>
+.toolbar {
+  max-width: 430px;
+  margin: auto;
+}
+.n-select {
+  min-width: 120px;
+}
 .token--unknown {
   color: yellow;
 }

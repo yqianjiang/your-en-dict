@@ -6,7 +6,6 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -26,10 +25,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
@@ -63,10 +58,22 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%;
+  height: 100vh;
+}
+
+.n-layout-header {
+  padding: 0.5em;
+}
+
+.main-content-container {
+  min-height: 100vh;
   text-align: center;
+  box-sizing: border-box;
+}
+
+main {
+  padding: 20px;
 }
 
 hr {
@@ -78,14 +85,13 @@ hr {
   position: sticky;
   top: 0;
   z-index: 2;
-  background-color: #242424;
+  background-color: var(--n-color);
   width: 100%;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
-    background-color: #ffffff;
   }
   a:hover {
     color: #747bff;
@@ -94,7 +100,18 @@ hr {
     color: #213547;
     background-color: #f9f9f9;
   }
-  .sticky-top {
-    background-color: #ffffff;
+}
+
+@media (max-width: 880px) {
+  .n-layout-sider {
+    display: none;
+  }
+  .mobile-hide {
+    display: none;
+  }
+}
+@media (min-width: 880px) {
+  .nav-bar--mobile {
+    display: none;
   }
 }

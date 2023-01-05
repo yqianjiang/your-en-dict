@@ -1,6 +1,18 @@
 <script setup>
-import NaiveTheme from "@/components/NaiveTheme.vue";
-import { NMenu, NMessageProvider } from "naive-ui";
+import {
+  NConfigProvider,
+  useOsTheme,
+  darkTheme,
+  NMessageProvider,
+  NLayout,
+  NLayoutSider,
+  NLayoutHeader,
+  NLayoutContent,
+  NMenu,
+  NButton,
+  NPopover,
+  NSpace,
+} from "naive-ui";
 import { ref, h } from "vue";
 import { RouterLink } from "vue-router";
 
@@ -31,26 +43,94 @@ const menuOptions = [
     ],
   },
   getMenu("Me", "Me"),
+  {
+    key: "divider-1",
+    type: "divider",
+    props: {
+      style: {
+        marginLeft: "32px",
+      },
+    },
+  },
+  // {
+  //   label: () =>
+  //     h(
+  //       'span',
+  //       {
+  //         onClick: toggleTheme,
+  //       },
+  //       { default: () => theme ? "浅色" : "深色" }
+  //     ),
+  //   key: "dark-mode",
+  // },
+  {
+    label: () =>
+      h(
+        'a',
+        {
+          href: "https://github.com/yqianjiang/your-en-dict/",
+          target: '_blank',
+        },
+        "Github"
+      ),
+    key: "github",
+  },
 ];
+
+const osThemeRef = useOsTheme();
+const theme = ref(osThemeRef.value === "dark" ? darkTheme : null);
+const toggleTheme = () => {
+  theme.value = theme.value ? null : darkTheme;
+};
+
+const showPopover = ref(false);
 </script>
 
 <template>
-  <NaiveTheme>
+  <NConfigProvider abstract :theme="theme">
     <NMessageProvider>
-      <NMenu
-        v-model:value="activeKey"
-        mode="horizontal"
-        :options="menuOptions"
-      />
-      <router-view v-slot="{ Component, route }">
-        <!-- <transition :name="route.meta.transition"> -->
-        <!-- <KeepAlive exclude="article"> -->
-        <component :is="Component" />
-        <!-- </KeepAlive> -->
-        <!-- </transition> -->
-      </router-view>
+      <NLayout has-sider position="absolute">
+        <NLayoutSider
+          collapse-mode="transform"
+          show-trigger="arrow-circle"
+          :collapsed-width="0"
+          bordered
+        >
+          <NMenu v-model:value="activeKey" :options="menuOptions" />
+        </NLayoutSider>
+        <NLayout>
+          <NLayoutHeader bordered>
+            <NSpace align="center" justify="space-between">
+              <div class="nav-bar--mobile">
+                <NPopover trigger="click">
+                  <template #trigger>
+                    <NButton @click="showPopover = !showPopover">
+                      菜单
+                    </NButton>
+                  </template>
+                  <NMenu v-model:value="activeKey" :options="menuOptions" />
+                </NPopover>
+              </div>
+              <div>你的定制英语词典</div>
+              <!-- <div class="mobile-hide"> -->
+                <!-- <NSpace> -->
+                  <NButton quaternary @click="toggleTheme">{{ theme ? "浅色" : "深色" }}</NButton>
+                  <!-- <a href="https://github.com/yqianjiang/your-en-dict/"><NButton quaternary>Github</NButton></a> -->
+                <!-- </NSpace> -->
+              <!-- </div> -->
+            </NSpace>
+          </NLayoutHeader>
+          <NLayoutContent class="main-content-container">
+            <main>
+              <router-view v-slot="{ Component, route }">
+                <component :is="Component" />
+              </router-view>
+            </main>
+          </NLayoutContent>
+        </NLayout>
+      </NLayout>
     </NMessageProvider>
-  </NaiveTheme>
+  </NConfigProvider>
 </template>
 
 <style scoped></style>
