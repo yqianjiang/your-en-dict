@@ -1,6 +1,6 @@
 <script setup>
-import { reactive } from "vue";
-import { NTag } from "naive-ui";
+import { reactive, ref } from "vue";
+import { NSpace, NTag, NSwitch, NSelect, NButton } from "naive-ui";
 import { findLemma } from "@/utils/lemmatize.js";
 import { useDictData } from '@/hooks/useDictData';
 import WordListPopup from "@/components/WordListPopup.vue";
@@ -25,9 +25,8 @@ const onUpdateUserDict = () => {
 
 const mode = reactive({
   markUnknownWord: false,
-  highlight: true,
   showTrans: false,
-  showByTokens: true,
+  showSentenceTrans: false,
 });
 
 const computeTranslation = (token) => {
@@ -55,89 +54,96 @@ const onClickWord = async (e) => {
     } else {
       onRemove('unseen', token);
     }
-  } else {
+  } else if (mode.showTrans) {
     // toggle翻译模式
     toggleTrans(token);
   }
 };
 
+const highlightList = ref(['unknown', 'unseen', 'target']);
+const highlightOptions = [{label: '生词', value: 'unknown'}, {label: '未标记词(下划线)', value: 'unseen'}, {label: '目标词', value: 'target'}];
 </script>
 
 <template>
   <h2>{{ article.title }}</h2>
-  <NTag type="info" v-if="article.tag">
-      {{article.tag}}
-  </NTag>
+  <NTag type="info" v-if="article.tag"> {{ article.tag }} </NTag>
   <div class="sticky-top">
-    <div class="stats-info">
-      共{{ article.totalWords }}词，生词率{{
-        (
-          (data.unknownWord.length /
-            (data.knownWord.length +
-              data.unknownWord.length)) *
-          100
-        ).toFixed(2)
-      }}%
-    </div>
-    <button
-      v-if="Object.keys(data.translations).length"
-      @click="mode.showTrans = !mode.showTrans"
-    >
-      {{ mode.showTrans ? "隐藏" : "显示" }}词译
-    </button>
-    <button @click="mode.showByTokens = !mode.showByTokens">{{ mode.showByTokens ? "显示" : "隐藏" }}句译</button>
-    <!-- <button @click="mode.highlight = !mode.highlight">高亮开关</button> -->
-    <button @click="mode.markUnknownWord = !mode.markUnknownWord">
-      {{ mode.markUnknownWord ? "停止标记" : "开始标记" }}
-    </button>
-    <button @click="onUpdateUserDict">更新词表</button>
-    <WordListPopup :data="data" :onRemove="onRemove" />
+    <div class="stats-info"> 共{{ article.totalWords }}词，生词率{{ ((data.unknownWord.length / article.wordsUnique.length) * 100).toFixed(2) }}%，目标词率{{ ((data.targetWord.length / article.wordsUnique.length) * 100).toFixed(2) }}% </div>
+    <NSpace>
+      <NSpace> 显示设置： <NSwitch v-if="Object.keys(data.translations).length" v-model:value="mode.showTrans">
+          <template #checked> 单词翻译 </template>
+          <template #unchecked> 单词翻译 </template>
+        </NSwitch>
+        <NSwitch v-if="article.sentences[0][0].translation" v-model:value="mode.showSentenceTrans">
+          <template #checked> 整句翻译 </template>
+          <template #unchecked> 整句翻译 </template>
+        </NSwitch>
+      </NSpace>
+      <NSpace> 高亮选项：
+        <NSelect v-model:value="highlightList" multiple :options="highlightOptions" />
+      </NSpace>
+      <NSpace>
+        <NButton @click="mode.markUnknownWord = !mode.markUnknownWord"> {{ mode.markUnknownWord ? "停止标记" : "开始标记" }}
+        </NButton>
+        <NButton @click="onUpdateUserDict">更新词表</NButton>
+        <WordListPopup :data="data" :onRemove="onRemove" />
+      </NSpace>
+    </NSpace>
   </div>
   <p class="article">
-    <p v-for="(paragraph, idx) in article.sentences" :key="'paragraph'+idx">
-      <span v-for="(sentence, idx) in paragraph" :key="sentence.sentence.slice(0, 5)+idx">
-        <span class="origin-sentence" @click="onClickWord">
-          <span
-            v-for="token in sentence.tokens"
-            :class="{
-              'token--unseen':
-                mode.highlight && data.unseenWord.includes(findLemma(token)),
-              'token--unknown':
-                mode.highlight && data.unknownWord.includes(findLemma(token)),
-            }"
-            ><ruby :data-token="token">
-              {{ token }}<rt>{{ computeTranslation(token) }}</rt>
-            </ruby>
-            {{ " " }}
-          </span>
+  <p v-for="(paragraph, idx) in article.sentences" :key="'paragraph' + idx">
+    <span v-for="(sentence, idx) in paragraph" :key="sentence.sentence.slice(0, 5) + idx">
+      <span class="origin-sentence" @click="onClickWord">
+        <span v-for="token in sentence.tokens">
+          <span :class="{
+            'token--unseen':
+              highlightList.includes('unseen') && data.unseenWord.includes(findLemma(token)),
+            'token--unknown':
+              highlightList.includes('unknown') && data.unknownWord.includes(findLemma(token)),
+            'token--ignore':
+              highlightList.includes('target') && !data.targetWord.includes(findLemma(token))
+          }">
+            <ruby :data-token="token"> {{ token }}<rt>{{ computeTranslation(token) }}</rt>
+            </ruby></span>
+          <!-- TODO: 若下一个词是标点符号，则不必了显示空格了。 -->
+          <span>{{ " " }}</span>
         </span>
-        <div class="translate-sentence" v-show="!mode.showByTokens">
-          {{ sentence.translation }}
-        </div>
       </span>
-    </p>
+      <div class="translate-sentence" v-show="mode.showSentenceTrans"> {{ sentence.translation }} </div>
+    </span>
+  </p>
   </p>
 </template>
 
 <style scoped>
-.token--unseen {
-  color: gray;
-}
 .token--unknown {
   color: yellow;
 }
+
+.token--ignore {
+  opacity: 0.5;
+  font-weight: 300;
+}
+
+.token--unseen {
+  text-decoration: underline;
+}
+
 .article {
   white-space: pre-wrap;
   font-size: 1.5em;
   line-height: 200%;
 }
+
 .translate-sentence {
   font-size: 0.75em;
   margin-bottom: 30px;
 }
+
 .n-space {
   align-items: center;
 }
+
 @media (prefers-color-scheme: light) {
   .token--unknown {
     color: blue;

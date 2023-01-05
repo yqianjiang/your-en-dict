@@ -1,5 +1,5 @@
-import { getTranslation, getTranslationBatch } from "@/services/dict.js";
 import { reactive, onBeforeUnmount } from "vue";
+import { getTranslation, getTranslationBatch } from "@/services/dict.js";
 import { compare } from "@/utils/articles/counter.js";
 import { userDict } from "@/utils/dict/userDict.js";
 
@@ -8,6 +8,7 @@ export const useDictData = (wordsUnique) => {
     knownWord: [],
     unseenWord: [],
     unknownWord: [],
+    targetWord: [],
     translations: {},
   });
 
@@ -75,6 +76,7 @@ export const useDictData = (wordsUnique) => {
     data.unknownWord = unknown;
     data.unseenWord = unseen;
     data.knownWord = known;
+    data.targetWord = wordsUnique.filter(w=>userDict.targetWords.includes(w));
     toggleTrans([...data.unknownWord, ...data.unseenWord]);
   };
   _initUserData(wordsUnique);

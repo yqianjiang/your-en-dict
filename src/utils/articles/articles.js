@@ -18,7 +18,7 @@ function tokenize(plainText, title) {
   // tokens.each((e) => e.markup());
   // doc.sentences().each((e) => e.markup());
   // const markedTokenText = doc.out(its.markedUpText);
-  title = title || sentences.splice(0, 1)[0];
+  title = title || sentences[0];
   return {
     title,
     plainText,

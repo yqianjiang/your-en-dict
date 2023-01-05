@@ -23,8 +23,8 @@ const mode = reactive({
 <template>
   <Popup btnText="查看词表">
     <template #header>
-      <NSpace>
-        词表
+      <NSpace align="center">
+        <span>词表</span>
         <NSelect
           v-model:value="wordsOrder"
           :options="sortWordsOptions"
