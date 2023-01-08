@@ -16,6 +16,12 @@ import {
 import { ref, h } from "vue";
 import { RouterLink } from "vue-router";
 
+const osThemeRef = useOsTheme();
+const theme = ref(osThemeRef.value === "dark" ? darkTheme : null);
+const toggleTheme = () => {
+  theme.value = theme.value ? null : darkTheme;
+};
+
 const getMenu = (name, label) => ({
   label: () =>
     h(
@@ -43,6 +49,9 @@ const menuOptions = [
     ],
   },
   getMenu("Me", "Me"),
+];
+const mobileMenuOptions = [
+  ...menuOptions,
   {
     key: "divider-1",
     type: "divider",
@@ -52,24 +61,24 @@ const menuOptions = [
       },
     },
   },
-  // {
-  //   label: () =>
-  //     h(
-  //       'span',
-  //       {
-  //         onClick: toggleTheme,
-  //       },
-  //       { default: () => theme ? "浅色" : "深色" }
-  //     ),
-  //   key: "dark-mode",
-  // },
   {
     label: () =>
       h(
-        'a',
+        "p",
+        {
+          onClick: toggleTheme,
+        },
+        theme.value ? "浅色" : "深色"
+      ),
+    key: "darkMode",
+  },
+  {
+    label: () =>
+      h(
+        "a",
         {
           href: "https://github.com/yqianjiang/your-en-dict/",
-          target: '_blank',
+          target: "_blank",
         },
         "Github"
       ),
@@ -77,49 +86,49 @@ const menuOptions = [
   },
 ];
 
-const osThemeRef = useOsTheme();
-const theme = ref(osThemeRef.value === "dark" ? darkTheme : null);
-const toggleTheme = () => {
-  theme.value = theme.value ? null : darkTheme;
-};
-
 const showPopover = ref(false);
 </script>
 
 <template>
   <NConfigProvider abstract :theme="theme">
     <NMessageProvider>
-      <NLayout has-sider position="absolute">
-        <NLayoutSider
-          collapse-mode="transform"
-          show-trigger="arrow-circle"
-          :collapsed-width="0"
-          bordered
-        >
-          <NMenu v-model:value="activeKey" :options="menuOptions" />
-        </NLayoutSider>
-        <NLayout>
-          <NLayoutHeader bordered>
-            <NSpace align="center" justify="space-between">
-              <div class="nav-bar--mobile">
-                <NPopover trigger="click">
-                  <template #trigger>
-                    <NButton @click="showPopover = !showPopover">
-                      菜单
-                    </NButton>
-                  </template>
-                  <NMenu v-model:value="activeKey" :options="menuOptions" />
-                </NPopover>
-              </div>
-              <div>你的定制英语词典</div>
-              <!-- <div class="mobile-hide"> -->
-                <!-- <NSpace> -->
-                  <NButton quaternary @click="toggleTheme">{{ theme ? "浅色" : "深色" }}</NButton>
-                  <!-- <a href="https://github.com/yqianjiang/your-en-dict/"><NButton quaternary>Github</NButton></a> -->
-                <!-- </NSpace> -->
-              <!-- </div> -->
+      <NLayout position="absolute">
+        <NLayoutHeader bordered class="header">
+          <NSpace align="center" justify="space-between">
+            <div class="nav-bar--mobile">
+              <NPopover trigger="click">
+                <template #trigger>
+                  <NButton @click="showPopover = !showPopover"> 菜单 </NButton>
+                </template>
+                <NMenu v-model:value="activeKey" :options="mobileMenuOptions" />
+              </NPopover>
+            </div>
+            <div>你的定制英语词典</div>
+          </NSpace>
+          <div class="mobile-hide">
+            <NSpace>
+              <NButton quaternary @click="toggleTheme">{{
+                theme ? "浅色" : "深色"
+              }}</NButton>
+              <a href="https://github.com/yqianjiang/your-en-dict/"
+                ><NButton quaternary>Github</NButton></a
+              >
             </NSpace>
-          </NLayoutHeader>
+          </div>
+        </NLayoutHeader>
+        <NLayout
+          has-sider
+          position="absolute"
+          style="top: var(--header-height)"
+        >
+          <NLayoutSider
+            collapse-mode="transform"
+            show-trigger="arrow-circle"
+            :collapsed-width="0"
+            bordered
+          >
+            <NMenu v-model:value="activeKey" :options="menuOptions" />
+          </NLayoutSider>
           <NLayoutContent class="main-content-container">
             <main>
               <router-view v-slot="{ Component, route }">

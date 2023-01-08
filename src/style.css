@@ -12,6 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  --header-height: 3.5em;
 }
 
 a {
@@ -62,14 +63,17 @@ button:focus-visible {
   height: 100vh;
 }
 
-.n-layout-header {
-  padding: 0.5em;
-}
-
 .main-content-container {
-  min-height: 100vh;
   text-align: center;
   box-sizing: border-box;
+}
+
+.header {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.5em;
 }
 
 main {
